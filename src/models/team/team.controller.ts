@@ -1,12 +1,12 @@
-const TeamController = {
-  createTeam: async () => {},
+// const TeamController = {
+//   createTeam: async () => {},
 
-  updateTeam: async () => {},
+//   updateTeam: async () => {},
 
-  deleteTeam: async () => {},
+//   deleteTeam: async () => {},
 
-  findTeam: async () => {},
+//   findTeam: async () => {},
 
-  getAllTeams: async () => {},
-};
-export default TeamController;
+//   getAllTeams: async () => {},
+// };
+// export default TeamController;

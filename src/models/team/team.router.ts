@@ -1,10 +1,10 @@
-import { Router } from 'express';
+// import { Router } from 'express';
 
-import TeamController from './team.controller';
+// import TeamController from './team.controller';
 
-const taskRouter = Router();
+// const taskRouter = Router();
 
-//생성
-taskRouter.post('/', TeamController.createTeam);
+// //생성
+// taskRouter.post('/', TeamController.createTeam);
 
-export default taskRouter;
+// export default taskRouter;
