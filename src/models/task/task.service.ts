@@ -85,6 +85,15 @@ const TaskService = {
         },
       },
       {
+        $lookup: {
+          from: "teams",
+          localField: "statusInfo.crew_member",
+          foreignField: "user_id",
+          as: "crewMemberTeams",
+        },
+      },
+
+      {
         $project: {
           title: 1,
           content: 1,
@@ -102,6 +111,26 @@ const TaskService = {
                   _id: "$$crewMember._id",
                   name: "$$crewMember.name",
                   email: "$$crewMember.email",
+                  team: {
+                    $arrayElemAt: [
+                      {
+                        $map: {
+                          input: {
+                            $filter: {
+                              input: "$crewMemberTeams",
+                              as: "team",
+                              cond: {
+                                $eq: ["$$team.user_id", "$$crewMember._id"],
+                              },
+                            },
+                          },
+                          as: "team",
+                          in: "$$team.team",
+                        },
+                      },
+                      0,
+                    ],
+                  },
                 },
               },
             },
