@@ -6,7 +6,7 @@ const taskStatusSchema = new Schema({
   endDate: { type: Date, default: null },
   status: {
     type: String,
-    enum: ["할일", "진행중", "완료"],
+    enum: ["할 일", "진행중", "완료"],
     default: null,
   },
   priority: {
@@ -20,3 +20,19 @@ const taskStatusSchema = new Schema({
 });
 
 export default mongoose.model("Task_Status", taskStatusSchema);
+
+/*
+영어로 바꾸는 것 고려
+  status: {
+    type: String,
+    enum: ["To-do", "Progress", "Completed"],
+    default: null,
+  },
+  priority: {
+    type: String,
+    enum: ["high", "middle", "Low"],
+    default: null,
+  },
+
+
+*/

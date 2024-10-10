@@ -33,6 +33,7 @@ const TaskStatusService = {
     return await Task_Status.findOneAndDelete({ taskId });
   },
 
+  // 상태에 따라 검색기능 넣을지 말지 고려
   findTasksByStatus: async (status: string) => {
     return await Task_Status.aggregate([
       {

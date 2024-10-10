@@ -60,6 +60,15 @@ const TaskService = {
     return deletedTask;
   },
 
+  findTaskById: async (taskId: Types.ObjectId) => {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      throw new Error("업무를 찾을 수 없습니다.");
+    }
+    return task;
+  },
+
+  // 룩업 이게 맞는지 더블체크 뎁스가 너무 많음
   findTask: async (taskId: Types.ObjectId) => {
     const taskWithStatus = await Task.aggregate([
       {

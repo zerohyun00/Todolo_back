@@ -101,10 +101,7 @@ const UserService = {
     const users = await User.aggregate([
       {
         $match: {
-          $or: [
-            { email: { $regex: searchInfo, $options: "i" } },
-            { name: { $regex: searchInfo, $options: "i" } },
-          ],
+          name: { $regex: searchInfo, $options: "i" },
         },
       },
 
@@ -216,7 +213,10 @@ const UserService = {
       throw new Error("해당 유저를 찾을 수 없습니다.");
     }
 
-    const totalUsers = await User.countDocuments();
+    const totalUsers = await User.countDocuments({
+      name: { $regex: searchInfo, $options: "i" },
+    });
+    // const totalUsers = await User.countDocuments();
 
     return {
       users,

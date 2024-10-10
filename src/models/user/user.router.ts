@@ -26,9 +26,10 @@ userRouter.put(
   UserController.updateUserInformation
 );
 
-// 특정 유저 검색 (이메일, 이름, 팀으로 검색)
+// 특정 유저 검색 ( 이름으로 검색)
 userRouter.get("/search", UserController.findUser);
 
 // 모든 유저 검색
 userRouter.get("/users", UserController.getAllUsers);
+
 export default userRouter;
