@@ -25,9 +25,9 @@ const UserController = {
   },
   logIn: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { user_ID, password } = req.body;
+      const { email, password } = req.body;
       const { user, accessToken, refreshToken, team } = await UserService.logIn(
-        user_ID,
+        email,
 
         password
       );
@@ -42,7 +42,6 @@ const UserController = {
       res.status(200).send({
         message: "로그인 성공",
         data: {
-          user_ID: user.user_ID,
           name: user.name,
           avatar: user.avatar,
           team: team,

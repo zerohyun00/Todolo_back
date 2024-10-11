@@ -1,9 +1,11 @@
 import { Schema, model } from "mongoose";
 
 const projectSchema = new Schema({
-  user_id: { type: Schema.Types.ObjectId, ref: "User", required: true }, // 프로젝트 생성자
+  user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
   title: { type: String, required: true, maxlength: 150 },
-  team_ids: [{ type: Schema.Types.ObjectId, ref: "User" }], // 프로젝트에 속한 팀원의 ID 목록
+  team_member_id: [{ type: Schema.Types.ObjectId, ref: "User" }],
+
+  team_id: { type: Schema.Types.ObjectId, ref: "Team" },
   created_AT: { type: Date, default: Date.now },
   updated_AT: { type: Date, default: Date.now },
 });
@@ -11,6 +13,8 @@ const projectSchema = new Schema({
 export const Project = model("Project", projectSchema);
 
 /*
+interface IProject 만들어야 함
+
 기존에 있는 프로젝트에 업무를 생성 혹은 추가할 때
 {
   "user_id": "6708b5cb7f38c6bde0be74c4", 

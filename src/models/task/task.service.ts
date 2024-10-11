@@ -269,7 +269,7 @@ const TaskService = {
     const project = await Project.findById(task.project_id);
     if (!project) throw new Error("프로젝트를 찾을 수 없습니다.");
 
-    const isParticipant = project.team_ids.some(
+    const isParticipant = project.team_member_id.some(
       (participantId) => participantId.toString() === userId.toString()
     );
 

@@ -12,7 +12,7 @@ const ProjectService = {
     const newProject = new Project({
       user_id: userId,
       title: projectData.title,
-      team_ids: projectData.team_ids,
+      team_member_id: projectData.team_member_id,
     });
     return await newProject.save();
   },
@@ -55,7 +55,7 @@ const ProjectService = {
         {
           $lookup: {
             from: "users",
-            localField: "team_ids", // 프로젝트에 속한 팀원들의 ID
+            localField: "team_member_id", // 프로젝트에 속한 팀원들의 ID
             foreignField: "_id", // User 컬렉션에서 참조할 필드
             as: "teamMembers", // 팀원들의 정보가 저장될 필드
           },

@@ -9,7 +9,7 @@ const SALT_ROUNDS = 10;
 
 const UserService = {
   register: async (data: IUserInputDTO, team: string, filePath?: string) => {
-    const existingUser = await User.findOne({ user_ID: data.user_ID });
+    const existingUser = await User.findOne({ data: data.email });
     if (existingUser) {
       throw new Error("이미 존재하는 아이디입니다.");
     }
@@ -43,8 +43,8 @@ const UserService = {
     return savedUser;
   },
 
-  logIn: async (user_ID: string, password: string) => {
-    const user = await User.findOne({ user_ID });
+  logIn: async (email: string, password: string) => {
+    const user = await User.findOne({ email });
     if (!user) throw new Error("아이디 혹은 패스워드를 확인해주세요");
 
     const checkPassword = await bcrypt.compare(password, user.password!);
@@ -60,7 +60,7 @@ const UserService = {
 
     return {
       user,
-      user_ID: user.user_ID,
+      email,
       accessToken,
       refreshToken,
       // team: teamData ? teamData.team : null,
