@@ -25,9 +25,10 @@ const UserController = {
   },
   logIn: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email, password } = req.body;
+      const { user_ID, password } = req.body;
       const { user, accessToken, refreshToken, team } = await UserService.logIn(
-        email,
+        user_ID,
+
         password
       );
 
@@ -41,7 +42,7 @@ const UserController = {
       res.status(200).send({
         message: "로그인 성공",
         data: {
-          email: user.email,
+          user_ID: user.user_ID,
           name: user.name,
           avatar: user.avatar,
           team: team,
@@ -73,11 +74,7 @@ const UserController = {
       next(e);
     }
   },
-  logout: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  logout: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const refreshToken = req.cookies.refreshToken;
       if (!refreshToken) {

@@ -17,12 +17,10 @@ const TaskService = {
     await TaskStatusService.createTaskStatus(savedTask._id, taskData);
 
     return savedTask;
+    // 유저가 아니라면 생성못하도록 에러
   },
 
-  updateTask: async (
-    taskId: Types.ObjectId,
-    updateData: Partial<ITaskInputDTO>
-  ) => {
+  updateTask: async (taskId: Types.ObjectId, updateData: ITaskInputDTO) => {
     const updatedTask = await Task.findByIdAndUpdate(
       taskId,
       {
