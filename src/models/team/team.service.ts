@@ -1,12 +1,12 @@
-const TeamService = {
-  createTeam: async () => {},
+// const TeamService = {
+//   createTeam: async () => {},
 
-  updateTeam: async () => {},
+//   updateTeam: async () => {},
 
-  deleteTeam: async () => {},
+//   deleteTeam: async () => {},
 
-  findTeam: async () => {},
+//   findTeam: async () => {},
 
-  getAllTeams: async () => {},
-};
-export default TeamService;
+//   getAllTeams: async () => {},
+// };
+// export default TeamService;

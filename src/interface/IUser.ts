@@ -1,8 +1,9 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document } from "mongoose";
 
 export interface IUser extends Document<mongoose.Types.ObjectId> {
   name: string;
   email: string;
+  user_ID: string;
   password: string;
   avatar?: string;
   refreshToken?: string | null;
@@ -11,6 +12,7 @@ export interface IUser extends Document<mongoose.Types.ObjectId> {
 }
 
 export interface IUserInputDTO {
+  user_ID: string;
   name?: string;
   email: string;
   password: string;
