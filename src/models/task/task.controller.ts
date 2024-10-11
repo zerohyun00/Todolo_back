@@ -114,6 +114,98 @@ const TaskController = {
       next(error);
     }
   },
+
+  addComment: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { taskId } = req.params;
+      const userId = req.user!.userId;
+      const commentData = req.body;
+
+      if (!commentData.comment_content) {
+        res.status(400).send({ message: "댓글 내용을 입력해주세요" });
+      }
+
+      const comment = await TaskService.addComment(
+        new mongoose.Types.ObjectId(taskId),
+        new mongoose.Types.ObjectId(userId),
+        commentData
+      );
+
+      res
+        .status(201)
+        .send({ message: "댓글이 추가되었습니다.", data: comment });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  getComments: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { taskId } = req.params;
+
+      const comments = await TaskService.getComments(
+        new mongoose.Types.ObjectId(taskId)
+      );
+
+      res.status(200).send({ message: "댓글 목록 조회 성공", data: comments });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  updateComment: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { taskId, commentId } = req.params;
+      const userId = req.user!.userId;
+      const commentData = req.body;
+
+      const updatedComment = await TaskService.updateComment(
+        new mongoose.Types.ObjectId(taskId),
+        new mongoose.Types.ObjectId(commentId),
+        new mongoose.Types.ObjectId(userId),
+        commentData
+      );
+
+      res
+        .status(200)
+        .send({ message: "댓글이 수정되었습니다.", data: updatedComment });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  deleteComment: async (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { taskId, commentId } = req.params;
+      const userId = req.user!.userId;
+
+      await TaskService.deleteComment(
+        new mongoose.Types.ObjectId(taskId),
+        new mongoose.Types.ObjectId(commentId),
+        new mongoose.Types.ObjectId(userId)
+      );
+
+      res.status(200).send({ message: "댓글이 삭제되었습니다." });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 export default TaskController;

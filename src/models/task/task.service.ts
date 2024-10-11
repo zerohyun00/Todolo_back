@@ -3,6 +3,8 @@ import { ITaskInputDTO } from "../../interface/ITask";
 import { Types } from "mongoose";
 import TaskStatusService from "../taskstatus/taskstatus.service";
 import Task_Status from "../taskstatus/taskstatus.schema";
+import { ICommentInputDTO } from "../../interface/IComment";
+import { Project } from "../project/project.schema";
 
 const TaskService = {
   createTask: async (taskData: ITaskInputDTO) => {
@@ -254,6 +256,120 @@ const TaskService = {
         },
       },
     ]);
+  },
+
+  addComment: async (
+    taskId: Types.ObjectId,
+    userId: Types.ObjectId,
+    commentData: ICommentInputDTO
+  ) => {
+    const task = await Task.findById(taskId);
+    if (!task) throw new Error("업무를 찾을 수 없습니다.");
+
+    const project = await Project.findById(task.project_id);
+    if (!project) throw new Error("프로젝트를 찾을 수 없습니다.");
+
+    const isParticipant = project.team_ids.some(
+      (participantId) => participantId.toString() === userId.toString()
+    );
+
+    if (!isParticipant) throw new Error("댓글을 작성할 권한이 없습니다.");
+
+    const comment = {
+      _id: new Types.ObjectId(),
+      user_id: userId,
+      comment_content: commentData.comment_content,
+      created_AT: new Date(),
+      updated_AT: new Date(),
+    };
+
+    task.comments?.push(comment);
+    await task.save();
+
+    return comment;
+  },
+
+  getComments: async (taskId: Types.ObjectId) => {
+    const taskWithComments = await Task.aggregate([
+      { $match: { _id: taskId } },
+      { $unwind: "$comments" },
+      {
+        $lookup: {
+          from: "users",
+          localField: "comments.user_id",
+          foreignField: "_id",
+          as: "commentUser",
+        },
+      },
+      { $unwind: "$commentUser" },
+      {
+        $group: {
+          _id: "$_id",
+          comments: {
+            $push: {
+              _id: "$comments._id",
+              user_id: "$comments.user_id",
+              comment_content: "$comments.comment_content",
+              created_AT: "$comments.created_AT",
+              updated_AT: "$comments.updated_AT",
+              user: {
+                _id: "$commentUser._id",
+                name: "$commentUser.name",
+                email: "$commentUser.email",
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    if (!taskWithComments || taskWithComments.length === 0) {
+      throw new Error("업무를 찾을 수 없습니다.");
+    }
+
+    return taskWithComments[0].comments;
+  },
+
+  updateComment: async (
+    taskId: Types.ObjectId,
+    commentId: Types.ObjectId,
+    userId: Types.ObjectId,
+    commentData: ICommentInputDTO
+  ) => {
+    const task = await Task.findById(taskId);
+    if (!task) throw new Error("업무를 찾을 수 없습니다.");
+
+    const comment = task.comments?.id(commentId);
+    if (!comment) throw new Error("댓글을 찾을 수 없습니다.");
+
+    if (comment.user_id.toString() !== userId.toString())
+      throw new Error("댓글을 수정할 권한이 없습니다.");
+
+    comment.comment_content = commentData.comment_content;
+    comment.updated_AT = new Date();
+
+    await task.save();
+    return comment;
+  },
+
+  deleteComment: async (
+    taskId: Types.ObjectId,
+    commentId: Types.ObjectId,
+    userId: Types.ObjectId
+  ) => {
+    const task = await Task.findById(taskId);
+    if (!task) throw new Error("업무를 찾을 수 없습니다.");
+
+    const comment = task.comments?.id(commentId) as any;
+    if (!comment) throw new Error("댓글을 찾을 수 없습니다.");
+
+    if (comment.user_id.toString() !== userId.toString())
+      throw new Error("댓글을 삭제할 권한이 없습니다.");
+
+    comment.remove();
+    await task.save();
+
+    return { message: "댓글이 삭제되었습니다." };
   },
 };
 
