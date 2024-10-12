@@ -35,8 +35,8 @@
 
 */
 
-import { Request, Response, NextFunction } from "express";
-import { verifyToken } from "../src/utils/jwt";
+import { Request, Response, NextFunction } from 'express';
+import { verifyToken } from '../src/utils/jwt';
 
 interface TokenPayload {
   userId: string;
@@ -45,30 +45,26 @@ interface AuthenticatedRequest extends Request {
   user?: { userId: string };
 }
 
-export const authMiddleware = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-): void => {
+export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    res.status(401).json({ message: "토큰이 필요합니다." });
+    res.status(401).json({ message: '토큰이 필요합니다.' });
     return;
   }
 
-  const token = authHeader.split(" ")[1];
+  const token = authHeader.split(' ')[1];
 
   try {
     const decoded = verifyToken(token) as TokenPayload;
 
     if (decoded.userId) {
-      req.user = { userId: decoded.userId };
+      res.locals.userId = decoded.userId;
       next();
     } else {
-      res.status(401).json({ message: "유효하지 않은 토큰입니다." });
+      res.status(401).json({ message: '유효하지 않은 토큰입니다.' });
     }
   } catch (error) {
-    res.status(401).json({ message: "유효하지 않은 토큰입니다." });
+    res.status(401).json({ message: '유효하지 않은 토큰입니다.' });
   }
 };
