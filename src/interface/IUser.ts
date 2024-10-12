@@ -5,10 +5,11 @@ export interface IUser extends Document<mongoose.Types.ObjectId> {
   email: string;
   password: string;
   avatar?: string;
-  refreshToken?: string | null;
   created_AT: Date;
   updated_AT: Date;
+  refreshToken?: string | null;
   invitation_token?: string;
+  reset_token?: string;
 }
 
 export interface IUserInputDTO {
@@ -17,9 +18,9 @@ export interface IUserInputDTO {
   password: string;
   avatar?: string;
   team?: string;
-  refreshToken?: string;
   created_AT?: Date;
   updated_AT?: Date;
+  refreshToken?: string;
 }
 
 // export interface userUniqueSearchInput {

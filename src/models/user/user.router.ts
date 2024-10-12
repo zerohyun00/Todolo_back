@@ -15,6 +15,12 @@ userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
 // 팀 확인
 userRouter.post("/confirm-team/:token", UserController.confirmTeam);
 
+// 비밀번호 재설정 요청
+userRouter.post("/request-password-reset", UserController.requestPasswordReset);
+
+// 비밀번호 재설정
+userRouter.post("/reset-password/:token", UserController.resetPassword);
+
 // 로그인
 userRouter.post("/login", UserController.logIn);
 
@@ -24,7 +30,6 @@ userRouter.post("/logout", UserController.logout);
 // 유저 정보 업데이트 (비밀번호, 아바타, 팀 정보 업데이트)
 userRouter.put(
   "/update/:userId",
-
   authMiddleware,
   UserController.updateUserInformation
 );

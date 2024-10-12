@@ -22,8 +22,8 @@ const TaskController = {
       res
         .status(201)
         .send({ message: "업무가 성공적으로 생성되었습니다.", date: task });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -46,8 +46,8 @@ const TaskController = {
         message: "업무가 성공적으로 수정되었습니다. ",
         data: updatedTask,
       });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -67,8 +67,8 @@ const TaskController = {
 
       await TaskService.deleteTask(objectId);
       res.status(200).send({ message: "업무가 성공적으로 삭제되었습니다." });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -82,8 +82,8 @@ const TaskController = {
       const objectId = new mongoose.Types.ObjectId(taskId);
       const task = await TaskService.findTask(objectId);
       res.status(200).send({ message: "업무 검색 성공", data: task });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -97,8 +97,8 @@ const TaskController = {
       const limit = parseInt(req.query.limit as string, 10) || 10;
       const tasks = await TaskService.getAllTasks(page, limit);
       res.status(200).send({ message: "모든 업무 검색 성공", data: tasks });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
   findTasksByStatus: async (
@@ -110,8 +110,8 @@ const TaskController = {
       const { status } = req.params;
       const tasks = await TaskService.findTasksByStatus(status);
       res.status(200).send({ message: "업무 상태 검색 성공", data: tasks });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -138,8 +138,8 @@ const TaskController = {
       res
         .status(201)
         .send({ message: "댓글이 추가되었습니다.", data: comment });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -156,8 +156,8 @@ const TaskController = {
       );
 
       res.status(200).send({ message: "댓글 목록 조회 성공", data: comments });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -181,8 +181,8 @@ const TaskController = {
       res
         .status(200)
         .send({ message: "댓글이 수정되었습니다.", data: updatedComment });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -202,8 +202,8 @@ const TaskController = {
       );
 
       res.status(200).send({ message: "댓글이 삭제되었습니다." });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 };

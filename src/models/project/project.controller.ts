@@ -19,8 +19,8 @@ const ProjectController = {
       const project = await ProjectService.createProject(projectData, userId);
 
       res.status(201).json(project);
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -29,8 +29,8 @@ const ProjectController = {
       const { id } = req.params;
       const updatedProject = await ProjectService.updateProject(id, req.body);
       res.json(updatedProject);
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -43,8 +43,8 @@ const ProjectController = {
       const { id: userId } = req.params;
       const projects = await ProjectService.findProjectByUser(userId);
       res.status(200).json({ message: "프로젝트 조회 성공", data: projects });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -52,8 +52,8 @@ const ProjectController = {
     try {
       const projects = await ProjectService.getAllProjects();
       res.json(projects);
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -64,8 +64,8 @@ const ProjectController = {
       res
         .status(200)
         .json({ message: "프로젝트가 성공적으로 삭제되었습니다." });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -80,8 +80,8 @@ const ProjectController = {
       res
         .status(200)
         .json({ message: "프로젝트 및 업무 조회 성공", data: projects });
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 };

@@ -1,13 +1,13 @@
-import ImageService from './image.service';
-import { Request, Response, NextFunction } from 'express';
-import multer from 'multer';
-import path from 'path';
-import { User } from '../user/user.schema';
+import ImageService from "./image.service";
+import { Request, Response, NextFunction } from "express";
+import multer from "multer";
+import path from "path";
+import { User } from "../user/user.schema";
 
 // Multer 설정 - 서버에 이미지 파일 저장
 const storage = multer.diskStorage({
   destination: (_req: Request, _file: Express.Multer.File, cb) => {
-    cb(null, path.join(__dirname, '../../uploads'));
+    cb(null, path.join(__dirname, "../../uploads"));
   },
   filename: (_req: Request, file: Express.Multer.File, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -25,7 +25,7 @@ const ImageController = {
     try {
       const filePath = req.file?.path; // 이미지 파일을 uploads에 저장
       if (!filePath) {
-        throw new Error('Bad Request+이미지 파일이 필요합니다.');
+        throw new Error("Bad Request+이미지 파일이 필요합니다.");
       }
 
       const image = await ImageService.createImage({
@@ -33,10 +33,13 @@ const ImageController = {
         user_id: req.body.user_id,
         image_url: filePath,
       });
-      await User.updateOne({ _id: req.body.user_id }, { $set: { avatar: image.image_url } });
+      await User.updateOne(
+        { _id: req.body.user_id },
+        { $set: { avatar: image.image_url } }
+      );
       res.status(201).json(image); // json형식으로 응답
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -46,8 +49,8 @@ const ImageController = {
       const { id } = req.params; // 이미지 id
       const updatedImage = await ImageService.updateImage(id, req.body); // 해당 이미지를 업데이트
       res.status(200).json(updatedImage);
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
   findImage: async (req: Request, res: Response, next: NextFunction) => {
@@ -55,8 +58,8 @@ const ImageController = {
       const { id } = req.params; // 이미지 id
       const image = await ImageService.findImage(id); // db에서 id로 해당 이미지 조회
       res.status(200).json(image); // json으로 응답
-    } catch (error) {
-      next(error);
+    } catch (err) {
+      next(err);
     }
   },
 };

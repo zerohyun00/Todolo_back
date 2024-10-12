@@ -15,8 +15,8 @@ const UserController = {
       const newUser = await UserService.register(userData, filePath);
 
       return res.status(201).send({ message: "회원가입 성공", data: newUser });
-    } catch (e) {
-      next(e);
+    } catch (err) {
+      next(err);
     }
   },
   confirmTeam: async (req: Request, res: Response, next: NextFunction) => {
@@ -29,8 +29,8 @@ const UserController = {
       res
         .status(200)
         .send({ message: "팀 소속 업데이트 성공", data: updatedUser });
-    } catch (e) {
-      next(e);
+    } catch (err) {
+      next(err);
     }
   },
   logIn: async (req: Request, res: Response, next: NextFunction) => {
@@ -58,8 +58,8 @@ const UserController = {
         },
         accessToken,
       });
-    } catch (e) {
-      next(e);
+    } catch (err) {
+      next(err);
     }
   },
   refreshAccessToken: async (
@@ -79,8 +79,8 @@ const UserController = {
 
       const newAccessToken = generateToken(userId);
       res.status(200).send({ accessToken: newAccessToken });
-    } catch (e) {
-      next(e);
+    } catch (err) {
+      next(err);
     }
   },
   logout: async (req: Request, res: Response, next: NextFunction) => {
@@ -96,8 +96,41 @@ const UserController = {
         sameSite: "strict",
       });
       res.status(200).send({ message: "로그아웃 성공" });
-    } catch (e) {
-      next(e);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  requestPasswordReset: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { email } = req.body;
+
+      await UserService.requestPasswordReset(email);
+
+      res
+        .status(200)
+        .send({ message: "비밀번호 재설정 이메일이 전송되었습니다." });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  resetPassword: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { token } = req.params;
+      const { newPassword } = req.body;
+
+      await UserService.resetPassword(token, newPassword);
+
+      res
+        .status(200)
+        .send({ message: "비밀번호가 성공적으로 변경되었습니다." });
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -111,8 +144,8 @@ const UserController = {
       const updateData = req.body;
       await UserService.updateUserInformation(userId, updateData);
       res.status(200).send({ message: "유저 정보 수정 성공" });
-    } catch (e) {
-      next(e);
+    } catch (err) {
+      next(err);
     }
   },
 
@@ -128,8 +161,8 @@ const UserController = {
         limit
       );
       res.status(200).send({ message: "유저 검색 성공", data: users });
-    } catch (e) {
-      next(e);
+    } catch (err) {
+      next(err);
     }
   },
   getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
@@ -139,8 +172,8 @@ const UserController = {
 
       const users = await UserService.getAllUsers(page, limit);
       res.status(200).send({ message: "모든 유저 조회 성공", data: users });
-    } catch (e) {
-      next(e);
+    } catch (err) {
+      next(err);
     }
   },
 };
