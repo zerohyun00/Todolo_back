@@ -24,11 +24,13 @@ const ProjectService = {
         updateData
       );
       if (!updatedProject) {
-        throw new Error("프로젝트를 찾을 수 없습니다.");
+        if (!updatedProject) {
+          throw new Error("Not Found+프로젝트를 찾을 수 없습니다.");
+        }
       }
       return updatedProject;
-    } catch (error) {
-      throw new Error("프로젝트 수정 오류");
+    } catch (err) {
+      throw new Error("Bad Request+프로젝트 수정 오류");
     }
   },
 
@@ -36,14 +38,15 @@ const ProjectService = {
     try {
       const deletedProject = await Project.findByIdAndDelete(projectId);
       if (!deletedProject) {
-        throw new Error("프로젝트를 찾을 수 없습니다.");
+        throw new Error("Not Found+프로젝트를 찾을 수 없습니다.");
       }
       return deletedProject;
-    } catch (error) {
-      throw new Error("프로젝트 삭제 오류");
+    } catch (err) {
+      throw new Error("Bad Request+프로젝트 삭제 오류");
     }
   },
 
+  // 업무 조인 필요
   findProjectByUser: async (userId: string) => {
     try {
       const projects = await Project.aggregate([
@@ -88,12 +91,12 @@ const ProjectService = {
       ]);
 
       if (!projects || projects.length === 0) {
-        throw new Error("해당 유저의 프로젝트를 찾을 수 없습니다.");
+        throw new Error("Not Found+해당 유저의 프로젝트를 찾을 수 없습니다.");
       }
 
       return projects; // 해당 유저의 모든 프로젝트와 팀원 정보 반환
-    } catch (error) {
-      throw new Error("프로젝트 조회 오류");
+    } catch (err) {
+      throw new Error("Bad Request+프로젝트 조회 오류");
     }
   },
 
@@ -112,6 +115,7 @@ const ProjectService = {
           $unwind: "$user", // 프로젝트와 사용자 연결
         },
         {
+          // 프로젝트 안에 업무들이 들어있는데 표시해줄지 짜를지
           $project: {
             _id: 0,
             project_id: "$_id",
@@ -124,8 +128,8 @@ const ProjectService = {
         },
       ]);
       return projects;
-    } catch (error) {
-      throw new Error(`Bad Request+ 프로젝트 조회 오류`);
+    } catch (err) {
+      throw new Error("Bad Request+프로젝트 조회 오류");
     }
   },
 
@@ -178,12 +182,12 @@ const ProjectService = {
       ]);
 
       if (!projects || projects.length === 0) {
-        throw new Error("해당 유저의 프로젝트를 찾을 수 없습니다.");
+        throw new Error("Not Found+해당 유저의 프로젝트를 찾을 수 없습니다.");
       }
 
       return projects; // 해당 유저의 모든 프로젝트와 각 프로젝트에 속한 업무 정보 반환
-    } catch (error) {
-      throw new Error("프로젝트와 업무 조회 오류");
+    } catch (err) {
+      throw new Error("Bad Request+프로젝트와 업무 조회 오류");
     }
   },
 };

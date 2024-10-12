@@ -11,6 +11,7 @@ const userSchema = new Schema<IUser>({
   refreshToken: { type: String, default: null },
 
   invitation_token: { type: String, default: null },
+  reset_token: { type: String, default: null },
 
   created_AT: { type: Date, default: Date.now },
   updated_AT: { type: Date, default: Date.now },

@@ -33,7 +33,7 @@ const TaskService = {
     );
 
     if (!updatedTask) {
-      throw new Error("업무를 찾을 수 없습니다.");
+      throw new Error("Not Found+업무를 찾을 수 없습니다.");
     }
 
     if (
@@ -52,7 +52,7 @@ const TaskService = {
   deleteTask: async (taskId: Types.ObjectId) => {
     const deletedTask = await Task.findByIdAndDelete(taskId);
     if (!deletedTask) {
-      throw new Error("업무를 찾을 수 없습니다.");
+      throw new Error("Not Found+업무를 찾을 수 없습니다.");
     }
 
     await TaskStatusService.deleteTaskStatus(taskId);
@@ -63,7 +63,7 @@ const TaskService = {
   findTaskById: async (taskId: Types.ObjectId) => {
     const task = await Task.findById(taskId);
     if (!task) {
-      throw new Error("업무를 찾을 수 없습니다.");
+      throw new Error("Not Found+업무를 찾을 수 없습니다.");
     }
     return task;
   },
@@ -151,7 +151,7 @@ const TaskService = {
     ]);
 
     if (!taskWithStatus || taskWithStatus.length === 0) {
-      throw new Error("업무를 찾을 수 없습니다.");
+      throw new Error("Not Found+업무를 찾을 수 없습니다.");
     }
 
     return taskWithStatus[0];
@@ -204,7 +204,7 @@ const TaskService = {
     ]);
 
     if (!tasksWithStatus || tasksWithStatus.length === 0) {
-      throw new Error("업무를 찾을 수 없습니다.");
+      throw new Error("Not Found+업무를 찾을 수 없습니다.");
     }
 
     const totalTasks = await Task.countDocuments();
@@ -264,16 +264,17 @@ const TaskService = {
     commentData: ICommentInputDTO
   ) => {
     const task = await Task.findById(taskId);
-    if (!task) throw new Error("업무를 찾을 수 없습니다.");
+    if (!task) throw new Error("Not Found+업무를 찾을 수 없습니다.");
 
     const project = await Project.findById(task.project_id);
-    if (!project) throw new Error("프로젝트를 찾을 수 없습니다.");
+    if (!project) throw new Error("Not Found+프로젝트를 찾을 수 없습니다.");
 
     const isParticipant = project.team_member_id.some(
       (participantId) => participantId.toString() === userId.toString()
     );
 
-    if (!isParticipant) throw new Error("댓글을 작성할 권한이 없습니다.");
+    if (!isParticipant)
+      throw new Error("Forbidden+댓글을 작성할 권한이 없습니다.");
 
     const comment = {
       _id: new Types.ObjectId(),
@@ -324,7 +325,7 @@ const TaskService = {
     ]);
 
     if (!taskWithComments || taskWithComments.length === 0) {
-      throw new Error("업무를 찾을 수 없습니다.");
+      throw new Error("Not Found+업무를 찾을 수 없습니다.");
     }
 
     return taskWithComments[0].comments;
@@ -337,13 +338,13 @@ const TaskService = {
     commentData: ICommentInputDTO
   ) => {
     const task = await Task.findById(taskId);
-    if (!task) throw new Error("업무를 찾을 수 없습니다.");
+    if (!task) throw new Error("Not Found+업무를 찾을 수 없습니다.");
 
     const comment = task.comments?.id(commentId);
-    if (!comment) throw new Error("댓글을 찾을 수 없습니다.");
+    if (!comment) throw new Error("Not Found+댓글을 찾을 수 없습니다.");
 
     if (comment.user_id.toString() !== userId.toString())
-      throw new Error("댓글을 수정할 권한이 없습니다.");
+      throw new Error("Forbidden+댓글을 수정할 권한이 없습니다.");
 
     comment.comment_content = commentData.comment_content;
     comment.updated_AT = new Date();
@@ -358,13 +359,13 @@ const TaskService = {
     userId: Types.ObjectId
   ) => {
     const task = await Task.findById(taskId);
-    if (!task) throw new Error("업무를 찾을 수 없습니다.");
+    if (!task) throw new Error("Not Found+업무를 찾을 수 없습니다.");
 
     const comment = task.comments?.id(commentId) as any;
-    if (!comment) throw new Error("댓글을 찾을 수 없습니다.");
+    if (!comment) throw new Error("Not Found+댓글을 찾을 수 없습니다.");
 
     if (comment.user_id.toString() !== userId.toString())
-      throw new Error("댓글을 삭제할 권한이 없습니다.");
+      throw new Error("Forbidden+댓글을 삭제할 권한이 없습니다.");
 
     comment.remove();
     await task.save();

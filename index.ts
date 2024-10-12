@@ -30,7 +30,7 @@ app.use("/images", ImageRouter);
 app.use("/projects", ProjectRouter);
 app.use("/tasks", TaskRouter);
 
-// app.use(errorHandler);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
