@@ -2,9 +2,11 @@ import { Task } from "./task.schema";
 import { ITaskInputDTO } from "../../interface/ITask";
 import { Types } from "mongoose";
 import TaskStatusService from "../taskstatus/taskstatus.service";
-import Task_Status from "../taskstatus/taskstatus.schema";
+
 import { ICommentInputDTO } from "../../interface/IComment";
 import { Project } from "../project/project.schema";
+import { User } from "../user/user.schema";
+import { TaskStatus } from "../taskstatus/taskstatus.schema";
 
 const TaskService = {
   createTask: async (taskData: ITaskInputDTO) => {
@@ -39,9 +41,9 @@ const TaskService = {
     if (
       updateData.status ||
       updateData.priority ||
-      updateData.startDate ||
-      updateData.endDate ||
-      updateData.crew_member
+      updateData.start_date ||
+      updateData.end_date ||
+      updateData.task_member
     ) {
       await TaskStatusService.updateTaskStatus(taskId, updateData);
     }
@@ -76,9 +78,9 @@ const TaskService = {
       },
       {
         $lookup: {
-          from: "task_statuses",
+          from: "TaskStatus",
           localField: "_id",
-          foreignField: "taskId",
+          foreignField: "task_id",
           as: "statusInfo",
         },
       },
@@ -90,51 +92,41 @@ const TaskService = {
           from: "users",
           localField: "statusInfo.crew_member",
           foreignField: "_id",
-          as: "crewMembers",
+          as: "taskMembers",
         },
       },
       {
         $lookup: {
           from: "teams",
-          localField: "statusInfo.crew_member",
+          localField: "taskMembers._id",
           foreignField: "user_id",
-          as: "crewMemberTeams",
+          as: "taskMemberTeams",
         },
       },
-
       {
         $project: {
           title: 1,
           content: 1,
           statusInfo: {
-            _id: "$statusInfo._id",
-            startDate: "$statusInfo.startDate",
-            endDate: "$statusInfo.endDate",
-            status: "$statusInfo.status",
-            priority: "$statusInfo.priority",
-            crewMembers: {
+            startDate: 1,
+            endDate: 1,
+            status: 1,
+            priority: 1,
+            task_members: {
               $map: {
-                input: "$crewMembers",
-                as: "crewMember",
+                input: "$taskMembers",
+                as: "member",
                 in: {
-                  _id: "$$crewMember._id",
-                  name: "$$crewMember.name",
-                  email: "$$crewMember.email",
+                  _id: "$$member._id",
+                  name: "$$member.name",
+                  email: "$$member.email",
                   team: {
                     $arrayElemAt: [
                       {
-                        $map: {
-                          input: {
-                            $filter: {
-                              input: "$crewMemberTeams",
-                              as: "team",
-                              cond: {
-                                $eq: ["$$team.user_id", "$$crewMember._id"],
-                              },
-                            },
-                          },
+                        $filter: {
+                          input: "$taskMemberTeams",
                           as: "team",
-                          in: "$$team.team",
+                          cond: { $eq: ["$$team.user_id", "$$member._id"] },
                         },
                       },
                       0,
@@ -144,8 +136,8 @@ const TaskService = {
               },
             },
           },
-          createdAt: "$statusInfo.createdAt",
-          updatedAt: "$statusInfo.updatedAt",
+          createdAt: "$created_AT",
+          updatedAt: "$updated_AT",
         },
       },
     ]);
@@ -163,7 +155,7 @@ const TaskService = {
     const tasksWithStatus = await Task.aggregate([
       {
         $lookup: {
-          from: "task_statuses",
+          from: "taskStatuses",
           localField: "_id",
           foreignField: "taskId",
           as: "statusInfo",
@@ -175,9 +167,9 @@ const TaskService = {
       {
         $lookup: {
           from: "users",
-          localField: "statusInfo.crew_member",
+          localField: "statusInfo.task_member",
           foreignField: "_id",
-          as: "crewMembers",
+          as: "taskMembers",
         },
       },
       {
@@ -217,7 +209,7 @@ const TaskService = {
   },
 
   findTasksByStatus: async (status: string) => {
-    return await Task_Status.aggregate([
+    return await TaskStatus.aggregate([
       {
         $match: { status },
       },
@@ -235,9 +227,9 @@ const TaskService = {
       {
         $lookup: {
           from: "users",
-          localField: "crew_member",
+          localField: "task_member",
           foreignField: "_id",
-          as: "crewMembers",
+          as: "taskMembers",
         },
       },
       {
@@ -248,7 +240,7 @@ const TaskService = {
           endDate: 1,
           status: 1,
           priority: 1,
-          crewMembers: {
+          taskMembers: {
             _id: 1,
             name: 1,
             email: 1,
@@ -269,12 +261,12 @@ const TaskService = {
     const project = await Project.findById(task.project_id);
     if (!project) throw new Error("Not Found+프로젝트를 찾을 수 없습니다.");
 
-    const isParticipant = project.team_member_id.some(
-      (participantId) => participantId.toString() === userId.toString()
-    );
+    const user = await User.findById(userId);
+    if (!user) throw new Error("Not Found+사용자를 찾을 수 없습니다.");
 
-    if (!isParticipant)
+    if (project.team_id.toString() !== user.team_id?.toString()) {
       throw new Error("Forbidden+댓글을 작성할 권한이 없습니다.");
+    }
 
     const comment = {
       _id: new Types.ObjectId(),

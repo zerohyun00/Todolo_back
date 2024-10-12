@@ -1,9 +1,12 @@
-import mongoose, { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const taskStatusSchema = new Schema({
-  taskId: { type: mongoose.Schema.Types.ObjectId, ref: "Task", required: true },
-  startDate: { type: Date, default: null },
-  endDate: { type: Date, default: null },
+  task_id: { type: Schema.Types.ObjectId, ref: "Task" },
+  task_member: [{ type: Schema.Types.ObjectId, ref: "User" }],
+
+  start_date: { type: Date, default: null },
+  end_date: { type: Date, default: null },
+
   status: {
     type: String,
     enum: ["할 일", "진행중", "완료"],
@@ -14,12 +17,12 @@ const taskStatusSchema = new Schema({
     enum: ["높음", "중간", "낮음"],
     default: null,
   },
-  crew_member: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+
+  created_AT: { type: Date, default: Date.now },
+  updated_AT: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("Task_Status", taskStatusSchema);
+export const TaskStatus = model("TaskStatus", taskStatusSchema);
 
 /*
 영어로 바꾸는 것 고려

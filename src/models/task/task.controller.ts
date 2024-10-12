@@ -16,7 +16,8 @@ const TaskController = {
     try {
       const taskData = {
         ...req.body,
-        user_id: req.user!.userId,
+        // user_id: req.user!.userId,
+        user_id: res.locals.userId,
       };
       const task = await TaskService.createTask(taskData);
       res
@@ -37,7 +38,7 @@ const TaskController = {
       const objectId = new mongoose.Types.ObjectId(taskId);
 
       const task = await TaskService.findTaskById(objectId);
-      if (task.user_id.toString() !== req.user!.userId) {
+      if (task.user_id.toString() !== res.locals.userId) {
         res.status(403).send({ message: "업무를 수정할 권한이 없습니다." });
       }
 
@@ -119,10 +120,10 @@ const TaskController = {
     req: AuthenticatedRequest,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<void> => {
     try {
       const { taskId } = req.params;
-      const userId = req.user!.userId;
+      const userId = res.locals.userId;
       const commentData = req.body;
 
       if (!commentData.comment_content) {
@@ -168,7 +169,7 @@ const TaskController = {
   ) => {
     try {
       const { taskId, commentId } = req.params;
-      const userId = req.user!.userId;
+      const userId = res.locals.userId;
       const commentData = req.body;
 
       const updatedComment = await TaskService.updateComment(
@@ -193,7 +194,7 @@ const TaskController = {
   ) => {
     try {
       const { taskId, commentId } = req.params;
-      const userId = req.user!.userId;
+      const userId = res.locals.userId;
 
       await TaskService.deleteComment(
         new mongoose.Types.ObjectId(taskId),

@@ -1,28 +1,28 @@
 import { Types } from "mongoose";
-import Task_Status from "./taskstatus.schema";
+import { TaskStatus } from "./taskstatus.schema";
 
 const TaskStatusService = {
   createTaskStatus: async (taskId: Types.ObjectId, taskStatusData: any) => {
-    const taskStatus = new Task_Status({
+    const taskStatus = new TaskStatus({
       taskId,
-      startDate: taskStatusData.startDate || new Date(),
-      endDate: taskStatusData.endDate || null,
+      start_date: taskStatusData.start_date || new Date(),
+      end_date: taskStatusData.end_date || null,
       status: taskStatusData.status || "할일",
       priority: taskStatusData.priority || null,
-      crew_member: taskStatusData.crew_member,
+      task_member: taskStatusData.task_member,
     });
     return await taskStatus.save();
   },
 
   updateTaskStatus: async (taskId: Types.ObjectId, updateData: any) => {
-    return await Task_Status.findOneAndUpdate(
+    return await TaskStatus.findOneAndUpdate(
       { taskId },
       {
         status: updateData.status || undefined,
         priority: updateData.priority || undefined,
-        startDate: updateData.startDate || undefined,
-        endDate: updateData.endDate || undefined,
-        crew_member: updateData.crew_member || undefined,
+        start_date: updateData.start_date || undefined,
+        end_date: updateData.end_date || undefined,
+        task_member: updateData.task_member || undefined,
         updatedAt: new Date(),
       },
       { new: true }
@@ -30,12 +30,12 @@ const TaskStatusService = {
   },
 
   deleteTaskStatus: async (taskId: Types.ObjectId) => {
-    return await Task_Status.findOneAndDelete({ taskId });
+    return await TaskStatus.findOneAndDelete({ taskId });
   },
 
   // 상태에 따라 검색기능 넣을지 말지 고려
   findTasksByStatus: async (status: string) => {
-    return await Task_Status.aggregate([
+    return await TaskStatus.aggregate([
       {
         $match: { status: status },
       },
@@ -55,8 +55,8 @@ const TaskStatusService = {
           _id: "$taskInfo._id",
           title: "$taskInfo.title",
           content: "$taskInfo.content",
-          startDate: "$startDate",
-          endDate: "$endDate",
+          start_date: "$start_date",
+          end_date: "$end_date",
           status: "$status",
           priority: "$priority",
           createdAt: "$taskInfo.createdAt",

@@ -16,6 +16,7 @@ const taskSchema = new Schema<ITask>({
   content: { type: String, required: true },
   created_AT: { type: Date, default: Date.now },
   updated_AT: { type: Date, default: Date.now },
+
   comments: [commentSchema],
 });
 
