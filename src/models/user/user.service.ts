@@ -54,7 +54,7 @@ const UserService = {
   },
 
   sendTeamConfirmationEmail: async (user: any, token: string) => {
-    const link = `http://localhost:3000/confirm-team/${token}`;
+    const link = process.env.CONFIRMATION_TEAM_LINK;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -66,7 +66,7 @@ const UserService = {
 
     // 팀 소속 한개를 정해서 던져주는 건지 4개중에 하나를 사용자가 선택하는 건지 회의 해봐야 함
     const mailOptions = {
-      from: "todolocompany@gmail.com",
+      from: process.env.GOOGLE_EMAIL,
       to: user.email,
       subject: "팀 소속 확인",
       text: `팀 소속을 확인하려면 다음 링크를 클릭하세요: ${link}`,
