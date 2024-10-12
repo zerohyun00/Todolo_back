@@ -10,7 +10,7 @@ const userSchema = new Schema<IUser>({
   avatar: { type: String, default: "N/A" },
   refreshToken: { type: String, default: null },
 
-  // invitation_token: { type: String, default: null },
+  invitation_token: { type: String, default: null },
 
   created_AT: { type: Date, default: Date.now },
   updated_AT: { type: Date, default: Date.now },

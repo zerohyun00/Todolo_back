@@ -9,16 +9,26 @@ const UserController = {
     next: NextFunction
   ) => {
     try {
-      const { team, ...userData } = req.body;
+      const { ...userData } = req.body;
       const filePath = req.file?.path;
 
-      if (!team) {
-        return res.status(400).send({ message: "팀 정보가 필요합니다." });
-      }
-
-      const newUser = await UserService.register(userData, team, filePath);
+      const newUser = await UserService.register(userData, filePath);
 
       return res.status(201).send({ message: "회원가입 성공", data: newUser });
+    } catch (e) {
+      next(e);
+    }
+  },
+  confirmTeam: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { token } = req.params;
+      const { team } = req.body;
+
+      const updatedUser = await UserService.confirmTeam(token, team);
+
+      res
+        .status(200)
+        .send({ message: "팀 소속 업데이트 성공", data: updatedUser });
     } catch (e) {
       next(e);
     }

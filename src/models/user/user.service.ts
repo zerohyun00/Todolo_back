@@ -4,14 +4,16 @@ import { User } from "./user.schema";
 import { generateRefreshToken, generateToken } from "../../utils/jwt";
 import { Team } from "../team/team.schema";
 import { Image } from "../image/image.schema";
+import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 const SALT_ROUNDS = 10;
 
 const UserService = {
-  register: async (data: IUserInputDTO, team: string, filePath?: string) => {
+  register: async (data: IUserInputDTO, filePath?: string | undefined) => {
     const existingUser = await User.findOne({ data: data.email });
     if (existingUser) {
-      throw new Error("이미 존재하는 아이디입니다.");
+      throw new Error("이미 존재하는 이메일입니다.");
     }
 
     const hashedPassword = await bcrypt.hash(data.password!, SALT_ROUNDS);
@@ -31,16 +33,67 @@ const UserService = {
       await image.save();
       savedUser.avatar = image.image_url;
     }
+    const token = jwt.sign({ id: savedUser._id }, "invitation_token", {
+      expiresIn: "1h",
+    });
+    savedUser.invitation_token = token;
 
     await savedUser.save();
 
-    const newTeamEntry = new Team({
-      user_id: savedUser._id,
+    // const newTeamEntry = new Team({
+    //   user_id: savedUser._id,
+    //   team: team,
+    // });
+    // await newTeamEntry.save();
+
+    await UserService.sendTeamConfirmationEmail(savedUser, token);
+    return {
+      ...savedUser.toObject(),
+      invitation_token: token,
+    };
+  },
+
+  sendTeamConfirmationEmail: async (user: any, token: string) => {
+    const link = `http://localhost:3000/confirm-team/${token}`;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GOOGLE_EMAIL,
+        pass: process.env.GOOGLE_EMAIL_PASSWORD,
+      },
+    });
+
+    // 팀 소속 한개를 정해서 던져주는 건지 4개중에 하나를 사용자가 선택하는 건지 회의 해봐야 함
+    const mailOptions = {
+      from: "todolocompany@gmail.com",
+      to: user.email,
+      subject: "팀 소속 확인",
+      text: `팀 소속을 확인하려면 다음 링크를 클릭하세요: ${link}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+  },
+
+  confirmTeam: async (token: string, team: string) => {
+    const decoded = jwt.verify(token, "invitation_token") as { id: string };
+    const user = await User.findById(decoded.id);
+
+    if (!user) throw new Error("사용자를 찾을 수 없습니다");
+    if (user.invitation_token !== token) {
+      throw new Error("잘못된 토큰입니다.");
+    }
+
+    const updatedTeam = new Team({
+      user_id: user._id,
       team: team,
     });
-    await newTeamEntry.save();
+    await updatedTeam.save();
 
-    return savedUser;
+    user.invitation_token = undefined;
+    await user.save();
+
+    return user;
   },
 
   logIn: async (email: string, password: string) => {

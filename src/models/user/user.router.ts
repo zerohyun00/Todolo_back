@@ -12,6 +12,9 @@ userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
   UserController.register(req, res, next);
 });
 
+// 팀 확인
+userRouter.post("/confirm-team/:token", UserController.confirmTeam);
+
 // 로그인
 userRouter.post("/login", UserController.logIn);
 
