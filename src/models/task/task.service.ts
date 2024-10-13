@@ -3,6 +3,7 @@ import { Project } from "../project/project.schema";
 import { Team } from "../team/team.schema";
 import { Types } from "mongoose";
 import { ITaskInputDTO } from "../../interface/ITask";
+import { ICommentInputDTO } from "../../interface/IComment";
 
 const TaskService = {
   createTask: async (taskData: ITaskInputDTO, userId: string) => {
@@ -107,6 +108,85 @@ const TaskService = {
   
   
   */
+
+  addComment: async (
+    taskId: Types.ObjectId,
+    commentData: ICommentInputDTO,
+    userId: string
+  ) => {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
+    }
+
+    const newComment = {
+      user_id: userId,
+      comment_content: commentData.comment_content,
+      created_AT: new Date(),
+      updated_AT: new Date(),
+    };
+    task.comments?.push(newComment as any);
+    await task.save();
+
+    return { message: "댓글이 성공적으로 추가되었습니다." };
+  },
+  updateComment: async (
+    taskId: Types.ObjectId,
+    commentId: Types.ObjectId,
+    commentData: ICommentInputDTO,
+    userId: string
+  ) => {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
+    }
+
+    const comment = task.comments!.id(commentId);
+    if (!comment) {
+      throw new Error("Not Found+해당 댓글을 찾을 수 없습니다.");
+    }
+
+    if (comment.user_id.toString() !== userId) {
+      throw new Error(" Unauthorized+해당 댓글을 수정할 권한이 없습니다.");
+    }
+
+    comment.comment_content = commentData.comment_content;
+    comment.updated_AT = new Date();
+
+    await task.save();
+    return { message: "댓글이 성공적으로 수정되었습니다.", task };
+  },
+
+  deleteComment: async (
+    taskId: Types.ObjectId,
+    commentId: Types.ObjectId,
+    userId: string
+  ) => {
+    const task = await Task.findById(taskId);
+    if (!task) {
+      throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
+    }
+
+    const commentIndex = task.comments!.findIndex((comment) =>
+      comment._id.equals(commentId)
+    );
+
+    if (commentIndex === -1) {
+      throw new Error("Not Found+해당 댓글을 찾을 수 없습니다.");
+    }
+
+    const comment = task.comments![commentIndex];
+
+    if (comment.user_id.toString() !== userId) {
+      throw new Error(" Unauthorized+해당 댓글을 수정할 권한이 없습니다.");
+    }
+
+    task.comments!.splice(commentIndex, 1);
+
+    await task.save();
+
+    return { message: "댓글이 성공적으로 삭제되었습니다.", task };
+  },
 };
 
 export default TaskService;
