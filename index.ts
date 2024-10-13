@@ -23,18 +23,10 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use((req, res, next) => {
-  console.log("Headers:", req.headers);
-  // 보안상의 이유로 본문 전체를 로그로 출력하는 것은 피합니다.
-  next();
-});
-
 // 정적 파일 제공 설정
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/users", userRouter);
 app.use("/images", ImageRouter);
-
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
-
 app.use("/teams", teamRouter);
 app.use("/tasks", TaskRouter);
 app.use("/projects", ProjectRouter);
