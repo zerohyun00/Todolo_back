@@ -76,7 +76,7 @@ const ProjectController = {
     next: NextFunction
   ) => {
     try {
-      const { id: userId } = req.params; // 유저 ID를 경로에서 가져옴
+      const { id: userId } = req.params;
       const projects = await ProjectService.findProjectWithTasksByUser(userId);
       res
         .status(200)

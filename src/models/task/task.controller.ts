@@ -6,7 +6,7 @@ import TaskService from "./task.service";
 const TaskController = {
   createTask: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userId = res.locals.userId; // 인증 미들웨어에서 유저 정보 가져오기
+      const userId = res.locals.userId;
       const taskData = req.body;
       const task = await TaskService.createTask(taskData, userId);
       res
@@ -20,7 +20,7 @@ const TaskController = {
   updateTask: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { taskId } = req.params;
-      const userId = res.locals.userId; // 인증 미들웨어에서 유저 정보 가져오기
+      const userId = res.locals.userId;
       const taskData = req.body;
       const updatedTask = await TaskService.updateTask(
         new Types.ObjectId(taskId),

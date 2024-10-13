@@ -224,7 +224,6 @@ const UserService = {
   ) => {
     const skip = (page - 1) * limit;
 
-    // 로그인한 사용자의 팀 정보 가져오기
     const userTeam = await Team.findOne({ user_id: userId });
 
     if (!userTeam || !userTeam.members || userTeam.members.length === 0) {
@@ -234,8 +233,8 @@ const UserService = {
     const users = await User.aggregate([
       {
         $match: {
-          _id: { $in: userTeam.members }, // 팀에 속한 사용자들만 검색
-          name: { $regex: searchInfo, $options: "i" }, // 이름으로 필터링
+          _id: { $in: userTeam.members },
+          name: { $regex: searchInfo, $options: "i" },
         },
       },
       {

@@ -166,11 +166,11 @@ const UserController = {
       const { searchInfo } = req.query;
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 10;
-      const userId = res.locals.userId; // 로그인된 사용자 정보에서 userId 가져오기
+      const userId = res.locals.userId;
 
       const users = await UserService.findUser(
         searchInfo as string,
-        userId, // 로그인된 사용자 ID 전달
+        userId,
         page,
         limit
       );

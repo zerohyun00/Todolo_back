@@ -17,10 +17,9 @@ const ProjectService = {
     });
     const savedProject = await newProject.save();
 
-    // Push the new project into the team’s projects array
     await Team.findByIdAndUpdate(
       projectData.team_id,
-      { $push: { projects: savedProject._id } }, // Push project ID into the projects array
+      { $push: { projects: savedProject._id } },
       { new: true, useFindAndModify: false }
     );
 
@@ -71,40 +70,40 @@ const ProjectService = {
       const projects = await Project.aggregate([
         {
           $match: {
-            user_id: new mongoose.Types.ObjectId(userId), // 해당 유저가 생성한 프로젝트 찾기
+            user_id: new mongoose.Types.ObjectId(userId),
           },
         },
         {
           $lookup: {
             from: "users",
-            localField: "team_member_id", // 프로젝트에 속한 팀원들의 ID
-            foreignField: "_id", // User 컬렉션에서 참조할 필드
-            as: "teamMembers", // 팀원들의 정보가 저장될 필드
+            localField: "team_member_id",
+            foreignField: "_id",
+            as: "teamMembers",
           },
         },
         {
           $lookup: {
             from: "users",
-            localField: "user_id", // 프로젝트 생성자의 ID
-            foreignField: "_id", // User 컬렉션에서 참조할 필드
-            as: "creator", // 생성자의 정보가 저장될 필드
+            localField: "user_id",
+            foreignField: "_id",
+            as: "creator",
           },
         },
         {
-          $unwind: "$creator", // 생성자 정보
+          $unwind: "$creator",
         },
         {
           $project: {
             _id: 0,
-            projectId: "$_id", // _id를 projectId로 반환
+            projectId: "$_id",
             title: 1,
             user_id: 1,
             "creator.name": 1,
             "creator.email": 1,
             created_at: 1,
             updated_at: 1,
-            "teamMembers.name": 1, // 팀원의 이름 정보
-            "teamMembers.email": 1, // 팀원의 이메일 정보
+            "teamMembers.name": 1,
+            "teamMembers.email": 1,
           },
         },
       ]);
@@ -113,7 +112,7 @@ const ProjectService = {
         throw new Error("Not Found+해당 유저의 프로젝트를 찾을 수 없습니다.");
       }
 
-      return projects; // 해당 유저의 모든 프로젝트와 팀원 정보 반환
+      return projects;
     } catch (err) {
       throw new Error("Bad Request+프로젝트 조회 오류");
     }
@@ -124,17 +123,16 @@ const ProjectService = {
       const projects = await Project.aggregate([
         {
           $lookup: {
-            from: "users", // user 참조
-            localField: "user_id", // Project에서 참조
-            foreignField: "_id", // User에서 참조
-            as: "user", // 필드 이름
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "user",
           },
         },
         {
-          $unwind: "$user", // 프로젝트와 사용자 연결
+          $unwind: "$user",
         },
         {
-          // 프로젝트 안에 업무들이 들어있는데 표시해줄지 짜를지
           $project: {
             _id: 0,
             project_id: "$_id",
@@ -157,27 +155,27 @@ const ProjectService = {
       const projects = await Project.aggregate([
         {
           $match: {
-            user_id: new mongoose.Types.ObjectId(userId), // 해당 유저가 생성한 프로젝트 필터링
+            user_id: new mongoose.Types.ObjectId(userId),
           },
         },
         {
           $lookup: {
-            from: "tasks", // 참조할 컬렉션 이름 (Task 모델의 컬렉션 이름)
-            localField: "_id", // Project의 _id를 기준으로
-            foreignField: "project_id", // Task에서 매칭할 필드
-            as: "tasks", // 결과로 반환될 필드 이름
+            from: "tasks",
+            localField: "_id",
+            foreignField: "project_id",
+            as: "tasks",
           },
         },
         {
           $lookup: {
             from: "users",
-            localField: "user_id", // 프로젝트 생성자 ID
-            foreignField: "_id", // User에서 매칭할 필드
+            localField: "user_id",
+            foreignField: "_id",
             as: "creator",
           },
         },
         {
-          $unwind: "$creator", // 단일 생성자 정보 평탄화
+          $unwind: "$creator",
         },
         {
           $project: {
@@ -204,7 +202,7 @@ const ProjectService = {
         throw new Error("Not Found+해당 유저의 프로젝트를 찾을 수 없습니다.");
       }
 
-      return projects; // 해당 유저의 모든 프로젝트와 각 프로젝트에 속한 업무 정보 반환
+      return projects;
     } catch (err) {
       throw new Error("Bad Request+프로젝트와 업무 조회 오류");
     }
