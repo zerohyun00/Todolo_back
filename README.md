@@ -155,7 +155,7 @@ Authorization: Bearer {your_jwt_token}
 
     •	Method: PUT
     •	URL: /users/update/:userId
-    •	Description: 사용자 정보 (비밀번호, 아바타, 팀 정보) 업데이트
+    •	Description: 사용자 정보 (비밀번호, 아바타) 업데이트
 
 요청 헤더:
 
@@ -315,7 +315,8 @@ Content-Type: application/json
   "end_date": "2024-10-15",
   "priority": "높음",
   "status": "진행중",
-  "task_member": ["..."]
+  "task_member": ["..."],
+  "comments": ["..."]
 }
 ```
 
@@ -332,7 +333,8 @@ Content-Type: application/json
     "end_date": "2024-10-15",
     "priority": "높음",
     "status": "진행중",
-    "task_member": ["..."]
+    "task_member": ["..."],
+    "comments": ["..."]
   }
 }
 ```
@@ -360,7 +362,8 @@ Content-Type: application/json
   "end_date": "2024-10-20",
   "priority": "중간",
   "status": "완료",
-  "task_member": ["..."]
+  "task_member": ["..."],
+  "comments": ["..."]
 }
 ```
 
@@ -376,7 +379,8 @@ Content-Type: application/json
     "start_date": "2024-10-12",
     "end_date": "2024-10-20",
     "priority": "중간",
-    "status": "완료"
+    "status": "완료",
+    "comments": ["..."]
   }
 }
 ```
