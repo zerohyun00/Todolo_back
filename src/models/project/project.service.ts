@@ -56,6 +56,15 @@ const ProjectService = {
     }
   },
 
+  /*
+
+  프로젝트 조회
+  내가 포함된 프로젝트, 내가 만든 프로젝트
+  (프로젝트안에는 업무가 포함되어 있음)
+
+
+*/
+
   // 업무 조인 필요
   findProjectByUser: async (userId: string) => {
     try {

@@ -144,9 +144,15 @@ const UserController = {
     try {
       const { userId } = req.params;
       const updateData = req.body;
+
+      console.log("Uploaded file:", req.file);
+      if (req.file) {
+        updateData.avatar = req.file.path;
+      }
       await UserService.updateUserInformation(userId, updateData);
       res.status(200).send({ message: "유저 정보 수정 성공" });
     } catch (err) {
+      console.error("Error updating user information:", err);
       next(err);
     }
   },

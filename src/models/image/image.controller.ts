@@ -4,7 +4,6 @@ import multer from "multer";
 import path from "path";
 import { User } from "../user/user.schema";
 
-// Multer 설정 - 서버에 이미지 파일 저장
 const storage = multer.diskStorage({
   destination: (_req: Request, _file: Express.Multer.File, cb) => {
     cb(null, path.join(__dirname, "../../uploads"));
@@ -16,12 +15,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 파일 크기 제한 (5MB)
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 const ImageController = {
   createImage: async (req: Request, res: Response, next: NextFunction) => {
-    // 이미지 생성
+    // 5mb넘으면 안된다고 if문 추가하기
     try {
       const filePath = req.file?.path; // 이미지 파일을 uploads에 저장
       if (!filePath) {

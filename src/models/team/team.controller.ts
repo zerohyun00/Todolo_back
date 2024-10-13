@@ -1,13 +1,11 @@
-// controllers/TeamController.ts
-
 import { Request, Response, NextFunction } from "express";
-import { TeamService } from "./team.service";
+import TeamService from "./team.service";
 
 interface AuthenticatedRequest extends Request {
   user?: { userId: string };
 }
 
-export const findTeamInfo = async (
+const TeamController = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
@@ -20,3 +18,5 @@ export const findTeamInfo = async (
     next(error);
   }
 };
+
+export default TeamController;

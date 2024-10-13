@@ -14,9 +14,6 @@ const app = express();
 const port = process.env.PORT || 3000;
 dbConnect();
 
-app.use(cookieParser());
-app.use(express.json());
-
 const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true,
@@ -31,6 +28,9 @@ app.use("/tasks", TaskRouter);
 app.use("/projects", ProjectRouter);
 app.use("/teams", teamRouter);
 app.use("/images", ImageRouter);
+
+app.use(cookieParser());
+app.use(express.json());
 
 app.use(errorHandler);
 

@@ -1,10 +1,9 @@
 import { Router } from "express";
 import { authMiddleware } from "../../../middleware/auth.middleware";
-import { findTeamInfo } from "./team.controller";
+import TeamController from "./team.controller";
 
 const teamRouter = Router();
 
-// Route to get team details
-teamRouter.get("/:id", authMiddleware, findTeamInfo);
+teamRouter.get("/:id", authMiddleware, TeamController);
 
 export default teamRouter;

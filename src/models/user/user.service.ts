@@ -179,13 +179,16 @@ const UserService = {
   },
 
   updateUserInformation: async (userId: string, updateData: IUserInputDTO) => {
+    console.log("Update data received:", updateData);
     const updateFields: { [key: string]: any } = {};
 
     if (updateData.password) {
+      console.log("Password received:", updateData.password);
       const hashedPassword = await bcrypt.hash(
         updateData.password,
         SALT_ROUNDS
       );
+      console.log("Hashed password:", hashedPassword);
       updateFields.password = hashedPassword;
     }
 
@@ -193,15 +196,25 @@ const UserService = {
       updateFields.avatar = updateData.avatar;
     }
 
-    await User.updateOne({ _id: userId }, { $set: updateFields });
+    // await User.updateOne({ _id: userId }, { $set: updateFields });
+    const result = await User.updateOne(
+      { _id: userId },
+      { $set: updateFields }
+    );
+    console.log("Update result:", result);
 
-    if (updateData.team) {
-      await Team.updateOne(
-        { user_id: userId },
-        { $set: { team: updateData.team } }
-      );
-    }
+    // 팀 변경은 논의 필요
+    // if (updateData.team) {
+    //   await Team.updateOne(
+    //     { user_id: userId },
+    //     { $set: { team: updateData.team } }
+    //   );
+    // }
   },
+
+  /*
+  유저조회 다시 생각해보기
+  */
 
   findUser: async (
     searchInfo: string,
