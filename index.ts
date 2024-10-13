@@ -14,23 +14,30 @@ const app = express();
 const port = process.env.PORT || 3000;
 dbConnect();
 
+app.use(cookieParser());
+app.use(express.json());
+
 const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true,
 };
 app.use(cors(corsOptions));
 
-// 정적 파일 제공 설정
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use((req, res, next) => {
+  console.log("Headers:", req.headers);
+  // 보안상의 이유로 본문 전체를 로그로 출력하는 것은 피합니다.
+  next();
+});
 
+// 정적 파일 제공 설정
 app.use("/users", userRouter);
-app.use("/tasks", TaskRouter);
-app.use("/projects", ProjectRouter);
-app.use("/teams", teamRouter);
 app.use("/images", ImageRouter);
 
-app.use(cookieParser());
-app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+app.use("/teams", teamRouter);
+app.use("/tasks", TaskRouter);
+app.use("/projects", ProjectRouter);
 
 app.use(errorHandler);
 
