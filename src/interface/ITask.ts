@@ -9,16 +9,19 @@ export interface ITask extends Document<Types.ObjectId> {
   comments?: Types.DocumentArray<IComment>;
   created_AT: Date;
   updated_AT: Date;
+
   start_date?: Date;
   end_date?: Date;
   priority?: string;
   status?: string;
+  task_member?: Types.ObjectId[];
 }
 
 export interface ITaskInputDTO {
+  team_id: any;
+  project_title: any;
   user_id: Types.ObjectId;
   project_id: Types.ObjectId;
-  task_member?: Types.ObjectId[];
   title: string;
   content: string;
 
@@ -26,4 +29,7 @@ export interface ITaskInputDTO {
   end_date?: Date;
   priority?: string;
   status?: string;
+  task_member?: Types.ObjectId[];
+
+  comments?: any[];
 }

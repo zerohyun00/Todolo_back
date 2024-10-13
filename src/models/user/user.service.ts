@@ -78,24 +78,23 @@ const UserService = {
       throw new Error("Unauthorized+잘못된 토큰입니다.");
     }
 
-    // 기존 팀 찾기 또는 새 팀 생성
     let existingTeam = await Team.findOne({ team: team });
 
     if (!existingTeam) {
-      // 팀이 존재하지 않으면 새 팀 생성
       existingTeam = new Team({
         user_id: user._id,
         team: team,
         members: [user._id],
       });
     } else {
-      // 팀이 존재하면 members 배열에 사용자 이름 추가
-      existingTeam.members.push(user._id);
+      if (!existingTeam.members.includes(user._id)) {
+        existingTeam.members.push(user._id);
+      }
     }
 
     await existingTeam.save();
 
-    // 사용자의 invitation_token 제거
+    user.team_id = existingTeam._id;
     user.invitation_token = undefined;
     await user.save();
 
@@ -117,15 +116,15 @@ const UserService = {
     user.refreshToken = refreshToken;
     await user.save();
 
-    const teamData = await Team.findOne({ user_id: user._id });
+    const teamData = await Team.findOne({ members: user._id });
 
     return {
       user,
-      email,
+
       accessToken,
       refreshToken,
-      // team: teamData ? teamData.team : null,
-      team: teamData,
+      team: teamData ? teamData.team : null,
+      // team: teamData,
     };
   },
 

@@ -14,7 +14,8 @@ const ProjectController = {
     try {
       // const projectData = {...req.body, user_id: req.user!.userId,}
       const projectData = req.body;
-      const userId = req.user!.userId;
+      // const userId = req.user!.userId;
+      const userId = res.locals.userId;
 
       const project = await ProjectService.createProject(projectData, userId);
 

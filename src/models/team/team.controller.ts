@@ -1,12 +1,22 @@
-// const TeamController = {
-//   createTeam: async () => {},
+// controllers/TeamController.ts
 
-//   updateTeam: async () => {},
+import { Request, Response, NextFunction } from "express";
+import { TeamService } from "./team.service";
 
-//   deleteTeam: async () => {},
+interface AuthenticatedRequest extends Request {
+  user?: { userId: string };
+}
 
-//   findTeam: async () => {},
-
-//   getAllTeams: async () => {},
-// };
-// export default TeamController;
+export const findTeamInfo = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const teamId = req.params.id;
+    const teamDetails = await TeamService.findTeamInfo(teamId);
+    res.status(200).json(teamDetails);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -1,10 +1,10 @@
-// import { Router } from 'express';
+import { Router } from "express";
+import { authMiddleware } from "../../../middleware/auth.middleware";
+import { findTeamInfo } from "./team.controller";
 
-// import TeamController from './team.controller';
+const teamRouter = Router();
 
-// const taskRouter = Router();
+// Route to get team details
+teamRouter.get("/:id", authMiddleware, findTeamInfo);
 
-// //생성
-// taskRouter.post('/', TeamController.createTeam);
-
-// export default taskRouter;
+export default teamRouter;

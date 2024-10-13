@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import { errorHandler } from "./middleware/error.handler.middleware";
 import path from "path";
 import TaskRouter from "./src/models/task/task.router";
+import teamRouter from "./src/models/team/team.router";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -28,6 +29,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/users", userRouter);
 app.use("/tasks", TaskRouter);
 app.use("/projects", ProjectRouter);
+app.use("/teams", teamRouter);
 app.use("/images", ImageRouter);
 
 app.use(errorHandler);

@@ -8,6 +8,10 @@ const teamSchema = new Schema({
 
   created_AT: { type: Date, default: Date.now },
   updated_AT: { type: Date, default: Date.now },
+
+  projects: [{ type: Schema.Types.ObjectId, ref: "Project" }],
+
+  taskStatuses: [{ type: Schema.Types.ObjectId, ref: "TaskStatus" }],
 });
 
 export const Team = model("Team", teamSchema);
