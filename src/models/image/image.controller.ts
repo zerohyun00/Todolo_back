@@ -22,18 +22,17 @@ const ImageController = {
   createImage: async (req: Request, res: Response, next: NextFunction) => {
     // 5mb넘으면 안된다고 if문 추가하기
     try {
-      const filePath = req.file?.path; // 이미지 파일을 uploads에 저장
+      const filePath = req.file?.path;
       if (!filePath) {
         throw new Error('Bad Request+이미지 파일이 필요합니다.');
       }
 
       const image = await ImageService.createImage({
-        // 이미지 경로랑 userID 디비에 저장
         user_id: req.body.user_id,
         image_url: filePath,
       });
       await User.updateOne({ _id: req.body.user_id }, { $set: { avatar: image.image_url } });
-      res.status(201).json(image); // json형식으로 응답
+      res.status(201).json(image);
     } catch (err) {
       next(err);
     }
