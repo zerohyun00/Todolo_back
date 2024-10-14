@@ -271,94 +271,45 @@ const UserService = {
     const skip = (page - 1) * limit;
 
     const users = await User.aggregate([
-      {
-        $lookup: {
-          from: 'teams',
-          localField: '_id',
-          foreignField: 'user_id',
-          as: 'teamInfo',
-        },
-      },
-
-      {
-        $lookup: {
-          from: 'tasks',
-          localField: '_id',
-          foreignField: 'user_id',
-          as: 'userTasks',
-        },
-      },
-
-      {
-        $lookup: {
-          from: 'task_statuses',
-          localField: '_id',
-          foreignField: 'crew_member',
-          as: 'includedTasksStatuses',
-        },
-      },
-
-      {
-        $lookup: {
-          from: 'tasks',
-          localField: 'includedTasksStatuses.taskId',
-          foreignField: '_id',
-          as: 'includedTasks',
-        },
-      },
-
+      { $match: { _id: User } },
       {
         $lookup: {
           from: 'projects',
           localField: '_id',
           foreignField: 'user_id',
-          as: 'userProjects',
+          as: 'createdProjects',
         },
       },
-
       {
         $lookup: {
-          from: 'project_members',
+          from: 'projects',
           localField: '_id',
-          foreignField: 'member_id',
-          as: 'includedProjects',
+          foreignField: 'team_id',
+          as: 'teamProjects',
         },
       },
-
       {
-        $project: {
-          name: 1,
-          email: 1,
-          avatar: 1,
-          teamInfo: 1,
-          userTasks: {
-            _id: 1,
-            title: 1,
-            content: 1,
-            created_AT: 1,
-            updated_AT: 1,
-          },
-          includedTasks: {
-            _id: 1,
-            title: 1,
-            content: 1,
-            created_AT: 1,
-            updated_AT: 1,
-          },
-          userProjects: {
-            _id: 1,
-            projectName: 1,
-            description: 1,
-            created_AT: 1,
-            updated_AT: 1,
-          },
-          includedProjects: {
-            _id: 1,
-            projectName: 1,
-            description: 1,
-            created_AT: 1,
-            updated_AT: 1,
-          },
+        $lookup: {
+          from: 'teams',
+          localField: 'team_id',
+          foreignField: '_id',
+          as: 'teamInfo',
+        },
+      },
+      {
+        $lookup: {
+          from: 'tasks',
+          localField: '_id',
+          foreignField: 'user_id',
+          as: 'createdTasks',
+        },
+      },
+      {
+        $lookup: {
+          from: 'tasks',
+          localField: '_id',
+          foreignField: 'task_member',
+          as: 'assignedTasks',
         },
       },
       { $skip: skip },
