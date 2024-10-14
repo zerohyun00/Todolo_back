@@ -14,8 +14,8 @@ const TeamController = async (
     const teamId = req.params.id;
     const teamDetails = await TeamService.findTeamInfo(teamId);
     res.status(200).json(teamDetails);
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };
 

@@ -10,7 +10,7 @@ const TaskService = {
     const project = await Project.findById(taskData.project_id);
 
     if (!project) {
-      throw new Error("프로젝트를 찾을 수 없습니다.");
+      throw new Error("Not Found+프로젝트를 찾을 수 없습니다.");
     }
 
     const teamAggregation = await Team.aggregate([
@@ -28,7 +28,7 @@ const TaskService = {
     ]);
 
     if (teamAggregation.length === 0) {
-      throw new Error("해당 팀이 존재하지 않습니다.");
+      throw new Error("Not Found+해당 팀이 존재하지 없습니다.");
     }
 
     const team = teamAggregation[0];
@@ -37,7 +37,9 @@ const TaskService = {
     );
 
     if (!isMember) {
-      throw new Error("해당 팀의 멤버가 아니므로 업무를 생성할 수 없습니다.");
+      throw new Error(
+        "Unauthorized+해당 팀의 멤버가 아니므로 업무를 생성할 수 없습니다."
+      );
     }
 
     const task = new Task({
@@ -63,11 +65,11 @@ const TaskService = {
   ) => {
     const task = await Task.findById(taskId);
     if (!task) {
-      throw new Error("해당 업무를 찾을 수 없습니다.");
+      throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
     }
 
     if (task.user_id.toString() !== userId) {
-      throw new Error("해당 업무를 수정할 권한이 없습니다.");
+      throw new Error("Unauthorized+해당 업무를 수정할 권한이 없습니다.");
     }
 
     const updatedTask = await Task.findByIdAndUpdate(
@@ -90,11 +92,11 @@ const TaskService = {
   deleteTask: async (taskId: Types.ObjectId, userId: string) => {
     const task = await Task.findById(taskId);
     if (!task) {
-      throw new Error("해당 업무를 찾을 수 없습니다.");
+      throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
     }
 
     if (task.user_id.toString() !== userId) {
-      throw new Error("해당 업무를 삭제할 권한이 없습니다.");
+      throw new Error("Unauthorized해당 업무를 삭제할 권한이 없습니다.");
     }
 
     await Task.findByIdAndDelete(taskId);
