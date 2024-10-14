@@ -126,7 +126,7 @@ const UserController = {
         updateData.avatar = req.file.path;
       }
 
-      const result = await UserService.updateUserInformation(userId, updateData);
+      await UserService.updateUserInformation(userId, updateData);
 
       res.status(200).send({ message: '유저 정보 수정 성공' });
     } catch (err) {
