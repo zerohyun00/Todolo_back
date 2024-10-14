@@ -36,7 +36,7 @@
 */
 
 import { Request, Response, NextFunction } from "express";
-import { verifyToken } from "../src/utils/jwt";
+import { verifyToken } from "../utils/jwt";
 
 interface TokenPayload {
   userId: string;
@@ -63,7 +63,6 @@ export const authMiddleware = (
     const decoded = verifyToken(token) as TokenPayload;
 
     if (decoded.userId) {
-      console.log("Decoded userId:", decoded.userId);
       res.locals.userId = decoded.userId;
       next();
     } else {

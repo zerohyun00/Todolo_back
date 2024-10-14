@@ -34,7 +34,7 @@
 
 import { Router } from "express";
 import ProjectController from "./project.controller";
-import { authMiddleware } from "../../../middleware/auth.middleware";
+import { authMiddleware } from "../../middleware/auth.middleware";
 
 const ProjectRouter = Router();
 
@@ -84,78 +84,6 @@ ProjectRouter.post("/", authMiddleware, ProjectController.createProject);
 
 /**
  * @swagger
- * /projects/{id}:
- *   get:
- *     summary: 특정 유저의 프로젝트 조회
- *     description: 특정 유저가 만든 프로젝트를 조회합니다.
- *     tags: [Projects]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: 유저 ID
- *     responses:
- *       200:
- *         description: 프로젝트 조회 성공
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "프로젝트 조회 성공"
- *                 data:
- *                   type: array
- *                   description: 조회된 프로젝트 목록
- */
-ProjectRouter.get("/:id", authMiddleware, ProjectController.findProjectByUser);
-
-/**
- * @swagger
- * /projects/{id}:
- *   put:
- *     summary: 프로젝트 수정
- *     description: 기존 프로젝트를 수정합니다.
- *     tags: [Projects]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: 수정할 프로젝트 ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *                 description: 수정할 프로젝트 제목
- *     responses:
- *       200:
- *         description: 프로젝트 수정 성공
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "프로젝트 수정 성공"
- *                 data:
- *                   type: object
- *                   description: 수정된 프로젝트 데이터
- */
-ProjectRouter.put("/:id", authMiddleware, ProjectController.updateProject);
-
-/**
- * @swagger
  * /projects:
  *   get:
  *     summary: 모든 프로젝트 조회
@@ -177,34 +105,6 @@ ProjectRouter.put("/:id", authMiddleware, ProjectController.updateProject);
  *                   description: 조회된 프로젝트 목록
  */
 ProjectRouter.get("/", authMiddleware, ProjectController.getAllProjects);
-
-/**
- * @swagger
- * /projects/{id}:
- *   delete:
- *     summary: 프로젝트 삭제
- *     description: 특정 프로젝트를 삭제합니다.
- *     tags: [Projects]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: 삭제할 프로젝트 ID
- *     responses:
- *       200:
- *         description: 프로젝트 삭제 성공
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "프로젝트가 성공적으로 삭제되었습니다."
- */
-ProjectRouter.delete("/:id", authMiddleware, ProjectController.deleteProject);
 
 /**
  * @swagger

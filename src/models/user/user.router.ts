@@ -1,8 +1,8 @@
-import { Router } from 'express';
-import UserController from './user.controller';
-import { upload } from '../image/image.controller'; // Multer 설정
-import { authMiddleware } from '../../../middleware/auth.middleware';
-import { userValidator } from '../../../middleware/validators/user.validator';
+import { Router } from "express";
+import UserController from "./user.controller";
+import { upload } from "../image/image.controller"; // Multer 설정
+import { userValidator } from "../../middleware/validators/user.validator";
+import { authMiddleware } from "../../middleware/auth.middleware";
 
 const userRouter = Router();
 
@@ -13,34 +13,44 @@ const userRouter = Router();
  *   description: 유저 관리 API
  */
 
-//가입
-userRouter.post('/register', userValidator.signUp, upload.single('avatar'), (req, res, next) => {
-  UserController.register(req, res, next);
-});
+// //가입
+// userRouter.post(
+//   "/register",
+//   userValidator.signUp,
+//   upload.single("avatar"),
+//   (req, res, next) => {
+//     UserController.register(req, res, next);
+//   }
+// );
 
-// 팀 확인
-userRouter.post('/confirm-team/:token', UserController.confirmTeam);
+// // 팀 확인
+// userRouter.post("/confirm-team/:token", UserController.confirmTeam);
 
-// 비밀번호 재설정 요청
-userRouter.post('/request-password-reset', UserController.requestPasswordReset);
+// // 비밀번호 재설정 요청
+// userRouter.post("/request-password-reset", UserController.requestPasswordReset);
 
-// 비밀번호 재설정
-userRouter.post('/reset-password/:token', UserController.resetPassword);
+// // 비밀번호 재설정
+// userRouter.post("/reset-password/:token", UserController.resetPassword);
 
-// 로그인
-userRouter.post('/login', userValidator.logIn, UserController.logIn);
+// // 로그인
+// userRouter.post("/login", userValidator.logIn, UserController.logIn);
 
-// 로그아웃
-userRouter.post('/logout', UserController.logout);
+// // 로그아웃
+// userRouter.post("/logout", UserController.logout);
 
-// 유저 정보 업데이트 (비밀번호, 아바타 업데이트)
-userRouter.put('/update/:userId', upload.single('avatar'), authMiddleware, UserController.updateUserInformation);
+// // 유저 정보 업데이트 (비밀번호, 아바타 업데이트)
+// userRouter.put(
+//   "/update/:userId",
+//   upload.single("avatar"),
+//   authMiddleware,
+//   UserController.updateUserInformation
+// );
 
-// 특정 유저 검색  이름으로 검색 (소속 팀 기준)
-userRouter.get('/search', authMiddleware, UserController.findUser);
+// // 특정 유저 검색  이름으로 검색 (소속 팀 기준)
+// userRouter.get("/search", authMiddleware, UserController.findUser);
 
-// 모든 유저 검색
-userRouter.get('/users', UserController.getAllUsers);
+// // 모든 유저 검색
+// userRouter.get("/users", UserController.getAllUsers);
 /**
  * @swagger
  * /users/register:
@@ -82,9 +92,14 @@ userRouter.get('/users', UserController.getAllUsers);
  *                   type: object
  *                   description: 생성된 유저 정보
  */
-userRouter.post('/register', upload.single('avatar'), (req, res, next) => {
-  UserController.register(req, res, next);
-});
+userRouter.post(
+  "/register",
+  userValidator.signUp,
+  upload.single("avatar"),
+  (req, res, next) => {
+    UserController.register(req, res, next);
+  }
+);
 
 /**
  * @swagger
@@ -125,7 +140,10 @@ userRouter.post('/register', upload.single('avatar'), (req, res, next) => {
  *                   type: object
  *                   description: 업데이트된 유저 정보
  */
-userRouter.post('/confirm-team/:token', UserController.confirmTeam);
+userRouter.post("/confirm-team", (req, res, next) => {
+  UserController.confirmTeam(req, res, next);
+});
+// userRouter.post("/confirm-team", UserController.confirmTeam);
 
 /**
  * @swagger
@@ -156,7 +174,7 @@ userRouter.post('/confirm-team/:token', UserController.confirmTeam);
  *                   type: string
  *                   example: "비밀번호 재설정 이메일이 전송되었습니다."
  */
-userRouter.post('/request-password-reset', UserController.requestPasswordReset);
+userRouter.post("/request-password-reset", UserController.requestPasswordReset);
 
 /**
  * @swagger
@@ -194,7 +212,7 @@ userRouter.post('/request-password-reset', UserController.requestPasswordReset);
  *                   type: string
  *                   example: "비밀번호가 성공적으로 변경되었습니다."
  */
-userRouter.post('/reset-password/:token', UserController.resetPassword);
+userRouter.post("/reset-pw", UserController.resetPassword);
 
 /**
  * @swagger
@@ -234,7 +252,7 @@ userRouter.post('/reset-password/:token', UserController.resetPassword);
  *                   type: string
  *                   description: 발급된 액세스 토큰
  */
-userRouter.post('/login', UserController.logIn);
+userRouter.post("/login", userValidator.logIn, UserController.logIn);
 
 /**
  * @swagger
@@ -255,7 +273,7 @@ userRouter.post('/login', UserController.logIn);
  *                   type: string
  *                   example: "로그아웃 성공"
  */
-userRouter.post('/logout', authMiddleware, UserController.logout);
+userRouter.post("/logout", authMiddleware, UserController.logout);
 
 /**
  * @swagger
@@ -296,7 +314,12 @@ userRouter.post('/logout', authMiddleware, UserController.logout);
  *                   type: string
  *                   example: "유저 정보 수정 성공"
  */
-userRouter.put('/update/:userId', upload.single('avatar'), authMiddleware, UserController.updateUserInformation);
+userRouter.put(
+  "/update/:userId",
+  upload.single("avatar"),
+  authMiddleware,
+  UserController.updateUserInformation
+);
 
 /**
  * @swagger
@@ -339,7 +362,7 @@ userRouter.put('/update/:userId', upload.single('avatar'), authMiddleware, UserC
  *                   type: array
  *                   description: 검색된 유저 목록
  */
-userRouter.get('/search', authMiddleware, UserController.findUser);
+userRouter.get("/search", authMiddleware, UserController.findUser);
 
 /**
  * @swagger
@@ -376,6 +399,6 @@ userRouter.get('/search', authMiddleware, UserController.findUser);
  *                   type: array
  *                   description: 유저 목록
  */
-userRouter.get('/users', UserController.getAllUsers);
+userRouter.get("/users", UserController.getAllUsers);
 
 export default userRouter;

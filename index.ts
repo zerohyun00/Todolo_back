@@ -1,19 +1,21 @@
 import express, { Request, Response, NextFunction } from "express";
 import userRouter from "./src/models/user/user.router";
-import ImageRouter from "./src/models/image/image.router";
+
 import ProjectRouter from "./src/models/project/project.router";
 import { dbConnect } from "./db/db";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { errorHandler } from "./middleware/error.handler.middleware";
+
 import path from "path";
 import TaskRouter from "./src/models/task/task.router";
 import teamRouter from "./src/models/team/team.router";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import imageRouter from "./src/models/image/image.router";
+import { errorHandler } from "./src/middleware/error.handler.middleware";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT ?? 3000;
 dbConnect();
 
 app.use(cookieParser());
@@ -43,16 +45,14 @@ const swaggerOptions = {
   apis: ["./src/models/**/*.ts"], // API 주석을 포함하는 경로
 };
 
-// Swagger 스펙 생성
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-// Swagger UI 라우트 추가
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // 정적 파일 제공 설정
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/users", userRouter);
-app.use("/images", ImageRouter);
+app.use("/images", imageRouter);
 app.use("/teams", teamRouter);
 app.use("/tasks", TaskRouter);
 app.use("/projects", ProjectRouter);

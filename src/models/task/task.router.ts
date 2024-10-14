@@ -34,7 +34,7 @@
 
 import { Router } from "express";
 import TaskController from "./task.controller";
-import { authMiddleware } from "../../../middleware/auth.middleware";
+import { authMiddleware } from "../../middleware/auth.middleware";
 
 const TaskRouter = Router();
 

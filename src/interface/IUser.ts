@@ -6,11 +6,11 @@ export interface IUser extends Document<mongoose.Types.ObjectId> {
   password: string;
   avatar?: string;
   team_id?: mongoose.Types.ObjectId;
-  created_AT: Date;
-  updated_AT: Date;
+  createdAt: Date;
+  updatedAt: Date;
   refreshToken?: string | null;
-  invitation_token?: string;
-  reset_token?: string;
+  invitationToken?: string;
+  resetToken?: string;
 }
 
 export interface IUserInputDTO {
@@ -20,8 +20,8 @@ export interface IUserInputDTO {
   team_id?: mongoose.Types.ObjectId;
   avatar?: string;
   team?: string;
-  created_AT?: Date;
-  updated_AT?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   refreshToken?: string;
 }
 

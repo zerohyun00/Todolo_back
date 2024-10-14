@@ -5,8 +5,8 @@ export interface IProject extends Document<Types.ObjectId> {
   title: string;
   team_member_id: mongoose.Types.ObjectId[];
   team_id: mongoose.Types.ObjectId;
-  created_AT: Date;
-  updated_AT: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IProjectInputDTO {

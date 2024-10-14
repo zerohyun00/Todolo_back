@@ -33,9 +33,9 @@ const TeamService = {
       {
         $lookup: {
           from: "users",
-          localField: "projects.tasks.task_member",
+          localField: "projects.tasks.taskMember",
           foreignField: "_id",
-          as: "projects.tasks.task_member_details",
+          as: "projects.tasks.taskMember_details",
         },
       },
 
@@ -47,17 +47,17 @@ const TeamService = {
             $push: {
               _id: "$projects._id",
               title: "$projects.title",
-              created_AT: "$projects.created_AT",
-              updated_AT: "$projects.updated_AT",
+              created_AT: "$projects.createdAt",
+              updated_AT: "$projects.updatedAt",
               tasks: {
                 _id: "$projects.tasks._id",
                 title: "$projects.tasks.title",
                 content: "$projects.tasks.content",
-                created_AT: "$projects.tasks.created_AT",
-                updated_AT: "$projects.tasks.updated_AT",
+                created_AT: "$projects.tasks.createdAt",
+                updated_AT: "$projects.tasks.updatedAt",
                 status: "$projects.tasks.status",
                 priority: "$projects.tasks.priority",
-                task_member_details: "$projects.tasks.task_member_details",
+                task_member_details: "$projects.tasks.taskMember_details",
                 comments: "$projects.tasks.comments",
               },
             },

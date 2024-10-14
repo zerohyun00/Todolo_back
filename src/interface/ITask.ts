@@ -4,32 +4,35 @@ import { IComment } from "./IComment";
 export interface ITask extends Document<Types.ObjectId> {
   user_id: Types.ObjectId;
   project_id: Types.ObjectId;
+  projectTitle?: string;
   title: string;
   content: string;
   comments?: Types.DocumentArray<IComment>;
-  created_AT: Date;
-  updated_AT: Date;
+  createdAt: Date;
+  updatedAt: Date;
 
-  start_date?: Date;
-  end_date?: Date;
+  startDate?: Date;
+  endDate?: Date;
   priority?: string;
   status?: string;
-  task_member?: Types.ObjectId[];
+  taskMember?: Types.ObjectId[];
 }
 
 export interface ITaskInputDTO {
-  team_id: any;
-  project_title: any;
+  team_id?: any;
+  projectTitle?: any;
   user_id: Types.ObjectId;
   project_id: Types.ObjectId;
   title: string;
   content: string;
 
-  start_date?: Date;
-  end_date?: Date;
+  startDate?: Date;
+  endDate?: Date;
   priority?: string;
   status?: string;
-  task_member?: Types.ObjectId[];
+  taskMember?: Types.ObjectId[];
 
   comments?: any[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }

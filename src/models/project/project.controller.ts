@@ -63,7 +63,7 @@ const ProjectController = {
       const { id } = req.params;
       await ProjectService.deleteProject(id);
       res
-        .status(200)
+        .status(204)
         .json({ message: "프로젝트가 성공적으로 삭제되었습니다." });
     } catch (err) {
       next(err);

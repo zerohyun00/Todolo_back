@@ -1,14 +1,14 @@
 import { Schema, model } from "mongoose";
 
-const projectSchema = new Schema({
-  user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  team_id: { type: Schema.Types.ObjectId, ref: "Team", required: true },
+const projectSchema = new Schema(
+  {
+    user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    team_id: { type: Schema.Types.ObjectId, ref: "Team", required: true },
 
-  title: { type: String, required: true, maxlength: 150 },
-
-  created_AT: { type: Date, default: Date.now },
-  updated_AT: { type: Date, default: Date.now },
-});
+    title: { type: String, required: true, maxlength: 150 },
+  },
+  { timestamps: true }
+);
 
 export const Project = model("Project", projectSchema);
 

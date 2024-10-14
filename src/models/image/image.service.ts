@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 interface ImageData {
   user_id: string;
-  image_url: string;
+  imageUrl: string;
 }
 
 const ImageService = {

@@ -76,7 +76,7 @@ const ProjectService = {
         {
           $lookup: {
             from: "users",
-            localField: "team_member_id",
+            localField: "teamMember_id",
             foreignField: "_id",
             as: "teamMembers",
           },

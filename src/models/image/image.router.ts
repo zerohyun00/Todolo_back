@@ -11,7 +11,7 @@
 import { Router } from "express";
 import { ImageController, upload } from "./image.controller";
 
-const ImageRouter = Router();
+const imageRouter = Router();
 
 /**
  * @swagger
@@ -76,6 +76,6 @@ const ImageRouter = Router();
  *                   type: string
  *                   example: "파일 크기는 5MB를 초과할 수 없습니다."
  */
-ImageRouter.post("/", upload.single("avatar"), ImageController.createImage);
+imageRouter.post("/", upload.single("avatar"), ImageController.createImage);
 
-export default ImageRouter;
+export default imageRouter;

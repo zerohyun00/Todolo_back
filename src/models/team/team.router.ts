@@ -9,8 +9,9 @@
 // export default teamRouter;
 
 import { Router } from "express";
-import { authMiddleware } from "../../../middleware/auth.middleware";
+
 import TeamController from "./team.controller";
+import { authMiddleware } from "../../middleware/auth.middleware";
 
 const teamRouter = Router();
 

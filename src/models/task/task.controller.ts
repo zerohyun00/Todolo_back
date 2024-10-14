@@ -11,7 +11,7 @@ const TaskController = {
       const task = await TaskService.createTask(taskData, userId);
       res
         .status(201)
-        .json({ message: "업무가 성공적으로 생성되었습니다.", data: task });
+        .send({ message: "업무가 성공적으로 생성되었습니다.", data: task });
     } catch (err) {
       next(err);
     }
@@ -27,7 +27,7 @@ const TaskController = {
         taskData,
         userId
       );
-      res.status(200).json({
+      res.status(200).send({
         message: "업무가 성공적으로 수정되었습니다.",
         data: updatedTask,
       });
@@ -44,7 +44,7 @@ const TaskController = {
         new Types.ObjectId(taskId),
         userId
       );
-      res.status(200).json(result);
+      res.status(200).send(result);
     } catch (err) {
       next(err);
     }
@@ -53,7 +53,7 @@ const TaskController = {
   addComment: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { taskId } = req.params;
-      // const userId = res.locals.user_id;
+
       const userId = res.locals.userId;
       const commentData = req.body;
 
@@ -99,7 +99,7 @@ const TaskController = {
         userId
       );
 
-      res.status(200).send({ message: "댓글이 삭제되었습니다.", data: result });
+      res.status(204).send({ message: "댓글이 삭제되었습니다.", data: result });
     } catch (err) {
       next(err);
     }

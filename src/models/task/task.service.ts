@@ -7,12 +7,29 @@ import { ICommentInputDTO } from "../../interface/IComment";
 
 const TaskService = {
   createTask: async (taskData: ITaskInputDTO, userId: string) => {
-    const project = await Project.findById(taskData.project_id);
+    let project;
 
-    if (!project) {
-      throw new Error("Not Found+프로젝트를 찾을 수 없습니다.");
+    if (taskData.project_id) {
+      project = await Project.findById(taskData.project_id);
+      if (!project) {
+        throw new Error("Not Found+프로젝트를 찾을 수 없습니다.");
+      }
+    } else if (taskData.projectTitle) {
+      const newProject = new Project({
+        user_id: userId,
+        title: taskData.projectTitle,
+        team_id: taskData.team_id,
+      });
+      project = await newProject.save();
+
+      await Team.findByIdAndUpdate(
+        taskData.team_id,
+        { $push: { projects: project._id } },
+        { new: true, useFindAndModify: false }
+      );
+    } else {
+      throw new Error("Bad Request+프로젝트 ID나 프로젝트 제목이 필요합니다.");
     }
-
     const teamAggregation = await Team.aggregate([
       {
         $match: { _id: new Types.ObjectId(project.team_id) },
@@ -22,7 +39,7 @@ const TaskService = {
           from: "users",
           localField: "members",
           foreignField: "_id",
-          as: "team_members",
+          as: "teamMembers",
         },
       },
     ]);
@@ -32,7 +49,7 @@ const TaskService = {
     }
 
     const team = teamAggregation[0];
-    const isMember = team.team_members.some(
+    const isMember = team.teamMembers.some(
       (member: any) => member._id.toString() === userId
     );
 
@@ -47,11 +64,11 @@ const TaskService = {
       project_id: project._id,
       title: taskData.title,
       content: taskData.content,
-      start_date: taskData.start_date,
-      end_date: taskData.end_date,
+      startDate: taskData.startDate,
+      endDate: taskData.endDate,
       priority: taskData.priority,
       status: taskData.status,
-      task_member: taskData.task_member,
+      taskMember: taskData.taskMember,
     });
 
     const savedTask = await task.save();
@@ -64,12 +81,12 @@ const TaskService = {
     userId: string
   ) => {
     const task = await Task.findById(taskId);
-    if (!task) {
-      throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
-    }
+    // if (!task) {
+    //   throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
+    // }
 
     // 업무 작성자만 수정 가능함
-    if (task.user_id.toString() !== userId) {
+    if (task!.user_id.toString() !== userId) {
       throw new Error("Unauthorized+해당 업무를 수정할 권한이 없습니다.");
     }
 
@@ -78,11 +95,11 @@ const TaskService = {
       {
         title: updateData.title,
         content: updateData.content,
-        start_date: updateData.start_date,
-        end_date: updateData.end_date,
+        startDate: updateData.startDate,
+        endDate: updateData.endDate,
         priority: updateData.priority,
         status: updateData.status,
-        task_member: updateData.task_member,
+        taskMember: updateData.taskMember,
       },
       { new: true }
     );
@@ -124,9 +141,9 @@ const TaskService = {
 
     const newComment = {
       user_id: userId,
-      comment_content: commentData.comment_content,
-      created_AT: new Date(),
-      updated_AT: new Date(),
+      commentContent: commentData.commentContent,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     task.comments?.push(newComment as any);
     await task.save();
@@ -153,8 +170,8 @@ const TaskService = {
       throw new Error(" Unauthorized+해당 댓글을 수정할 권한이 없습니다.");
     }
 
-    comment.comment_content = commentData.comment_content;
-    comment.updated_AT = new Date();
+    comment.commentContent = commentData.commentContent;
+    comment.updatedAt = new Date();
 
     await task.save();
     return { message: "댓글이 성공적으로 수정되었습니다.", task };
