@@ -68,6 +68,7 @@ const TaskService = {
       throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
     }
 
+    // 업무 작성자만 수정 가능함
     if (task.user_id.toString() !== userId) {
       throw new Error("Unauthorized+해당 업무를 수정할 권한이 없습니다.");
     }
