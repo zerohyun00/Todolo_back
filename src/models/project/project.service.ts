@@ -1,4 +1,5 @@
 import { IProjectInputDTO } from "../../interface/IProject";
+import { AppError } from "../../middleware/error.handler.middleware";
 import { Team } from "../team/team.schema";
 import { Project } from "./project.schema";
 import mongoose from "mongoose";
@@ -34,12 +35,12 @@ const ProjectService = {
       );
       if (!updatedProject) {
         if (!updatedProject) {
-          throw new Error("Not Found+프로젝트를 찾을 수 없습니다.");
+          throw new AppError("Not Found", 404, "프로젝트를 찾을 수 없습니다.");
         }
       }
       return updatedProject;
     } catch (err) {
-      throw new Error("Bad Request+프로젝트 수정 오류");
+      throw new AppError("Bad Request", 400, "프로젝트 수정 오류");
     }
   },
 
@@ -47,11 +48,11 @@ const ProjectService = {
     try {
       const deletedProject = await Project.findByIdAndDelete(projectId);
       if (!deletedProject) {
-        throw new Error("Not Found+프로젝트를 찾을 수 없습니다.");
+        throw new AppError("Not Found", 404, "프로젝트를 찾을 수 없습니다.");
       }
       return deletedProject;
     } catch (err) {
-      throw new Error("Bad Request+프로젝트 삭제 오류");
+      throw new AppError("Bad Request", 400, "프로젝트 삭제 오류");
     }
   },
 
@@ -109,12 +110,16 @@ const ProjectService = {
       ]);
 
       if (!projects || projects.length === 0) {
-        throw new Error("Not Found+해당 유저의 프로젝트를 찾을 수 없습니다.");
+        throw new AppError(
+          "Not Found",
+          404,
+          "해당 유저의 프로젝트를 찾을 수 없습니다."
+        );
       }
 
       return projects;
     } catch (err) {
-      throw new Error("Bad Request+프로젝트 조회 오류");
+      throw new AppError("Bad Request", 400, "프로젝트 조회 오류");
     }
   },
 
@@ -146,7 +151,7 @@ const ProjectService = {
       ]);
       return projects;
     } catch (err) {
-      throw new Error("Bad Request+프로젝트 조회 오류");
+      throw new AppError("Bad Request", 400, "프로젝트 조회 오류");
     }
   },
 
@@ -199,12 +204,16 @@ const ProjectService = {
       ]);
 
       if (!projects || projects.length === 0) {
-        throw new Error("Not Found+해당 유저의 프로젝트를 찾을 수 없습니다.");
+        throw new AppError(
+          "Not Found",
+          404,
+          "해당 유저의 프로젝트를 찾을 수 없습니다."
+        );
       }
 
       return projects;
     } catch (err) {
-      throw new Error("Bad Request+프로젝트와 업무 조회 오류");
+      throw new AppError("Bad Request", 400, "프로젝트와 업무 조회 오류");
     }
   },
 };

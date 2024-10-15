@@ -6,14 +6,16 @@ import { Team } from "../team/team.schema";
 import { Image } from "../image/image.schema";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import { AppError } from "../../middleware/error.handler.middleware";
 
 const SALT_ROUNDS = 10;
 
 const UserService = {
   register: async (data: IUserInputDTO, filePath?: string) => {
     const existingUser = await User.findOne({ data: data.email });
+
     if (existingUser) {
-      throw new Error("Bad Request+이미 존재하는 이메일입니다.");
+      throw new AppError("Bad Request", 400, "이미 존재하는 이메일입니다.");
     }
 
     const hashedPassword = await bcrypt.hash(data.password!, SALT_ROUNDS);
@@ -81,9 +83,10 @@ const UserService = {
 
     const user = await User.findById(decoded.id);
 
-    if (!user) throw new Error("Not Found+사용자를 찾을 수 없습니다.");
+    if (!user)
+      throw new AppError("Not Found", 404, "사용자를 찾을 수 없습니다.");
     if (user.invitationToken !== token) {
-      throw new Error("Unauthorized+잘못된 토큰입니다.");
+      throw new AppError("Unauthorized", 401, "잘못된 토큰입니다.");
     }
 
     let existingTeam = await Team.findOne({ team: team });
@@ -112,11 +115,19 @@ const UserService = {
   logIn: async (email: string, password: string) => {
     const user = await User.findOne({ email });
     if (!user)
-      throw new Error("Unauthorized+아이디 혹은 패스워드를 확인해주세요");
+      throw new AppError(
+        "Unauthorized",
+        401,
+        "아이디 혹은 패스워드를 확인해주세요"
+      );
 
     const checkPassword = await bcrypt.compare(password, user.password!);
     if (!checkPassword)
-      throw new Error("Unauthorized+아이디 혹은 패스워드를 확인해주세요");
+      throw new AppError(
+        "Unauthorized",
+        401,
+        "아이디 혹은 패스워드를 확인해주세요"
+      );
 
     const accessToken = generateToken(user._id.toString());
     const refreshToken = generateRefreshToken(user._id.toString());
@@ -145,7 +156,7 @@ const UserService = {
     const user = await User.findById(decoded.id);
 
     if (!user || user.resetToken !== token) {
-      throw new Error("Unauthorized+토큰이 유효하지 않습니다.");
+      throw new AppError("Unauthorized", 401, "토큰이 유효하지 않습니다.");
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
@@ -159,7 +170,11 @@ const UserService = {
   requestPasswordReset: async (email: string) => {
     const user = await User.findOne({ email });
     if (!user)
-      throw new Error("Not Found+해당 이메일을 사용하는 사용자가 없습니다.");
+      throw new AppError(
+        "Not Found",
+        404,
+        "해당 이메일을 사용하는 사용자가 없습니다."
+      );
 
     const resetToken = jwt.sign({ id: user._id }, "resetToken", {
       expiresIn: "1h",
@@ -241,7 +256,7 @@ const UserService = {
     const userTeam = await Team.findOne({ members: userId });
 
     if (!userTeam || !userTeam.members || userTeam.members.length === 0) {
-      throw new Error("Not Found+해당 유저를 찾을 수 없습니다.");
+      throw new AppError("Not Found", 404, "해당 유저를 찾을 수 없습니다.");
     }
 
     const users = await User.aggregate([
@@ -263,7 +278,7 @@ const UserService = {
     ]);
 
     if (users.length === 0) {
-      throw new Error("Not Found+해당 유저를 찾을 수 없습니다.");
+      throw new AppError("Not Found", 404, "해당 유저를 찾을 수 없습니다.");
     }
 
     const totalUsers = await User.countDocuments({
@@ -328,7 +343,7 @@ const UserService = {
     ]);
 
     if (!users || users.length === 0) {
-      throw new Error("Not Found+해당 유저를 찾을 수 없습니다.");
+      throw new AppError("Not Found", 404, "해당 유저를 찾을 수 없습니다.");
     }
 
     const totalUsers = await User.countDocuments();

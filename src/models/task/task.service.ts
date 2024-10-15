@@ -4,6 +4,7 @@ import { Team } from "../team/team.schema";
 import { Types } from "mongoose";
 import { ITaskInputDTO } from "../../interface/ITask";
 import { ICommentInputDTO } from "../../interface/IComment";
+import { AppError } from "../../middleware/error.handler.middleware";
 
 const TaskService = {
   createTask: async (taskData: ITaskInputDTO, userId: string) => {
@@ -12,7 +13,7 @@ const TaskService = {
     if (taskData.project_id) {
       project = await Project.findById(taskData.project_id);
       if (!project) {
-        throw new Error("Not Found+프로젝트를 찾을 수 없습니다.");
+        throw new AppError("Not Found", 404, "프로젝트를 찾을 수 없습니다.");
       }
     } else if (taskData.projectTitle) {
       const newProject = new Project({
@@ -29,7 +30,11 @@ const TaskService = {
         { new: true, useFindAndModify: false }
       );
     } else {
-      throw new Error("Bad Request+프로젝트 ID나 프로젝트 제목이 필요합니다.");
+      throw new AppError(
+        "Bad Request",
+        400,
+        "프로젝트 ID나 프로젝트 제목이 필요합니다."
+      );
     }
     const teamAggregation = await Team.aggregate([
       {
@@ -46,7 +51,7 @@ const TaskService = {
     ]);
 
     if (teamAggregation.length === 0) {
-      throw new Error("Not Found+해당 팀이 존재하지 없습니다.");
+      throw new AppError("Not Found", 404, "해당 팀이 존재하지 않습니다.");
     }
 
     const team = teamAggregation[0];
@@ -55,8 +60,10 @@ const TaskService = {
     );
 
     if (!isMember) {
-      throw new Error(
-        "Unauthorized+해당 팀의 멤버가 아니므로 업무를 생성할 수 없습니다."
+      throw new AppError(
+        "Unauthorized",
+        401,
+        "해당 팀의 멤버가 아니므로 업무를 생성할 수 없습니다."
       );
     }
 
@@ -88,7 +95,11 @@ const TaskService = {
 
     // 업무 작성자만 수정 가능함
     if (task!.user_id.toString() !== userId) {
-      throw new Error("Unauthorized+해당 업무를 수정할 권한이 없습니다.");
+      throw new AppError(
+        "Unauthorized",
+        401,
+        "해당 업무를 수정할 권한이 없습니다."
+      );
     }
 
     const updatedTask = await Task.findByIdAndUpdate(
@@ -111,11 +122,15 @@ const TaskService = {
   deleteTask: async (taskId: Types.ObjectId, userId: string) => {
     const task = await Task.findById(taskId);
     if (!task) {
-      throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
+      throw new AppError("Not Found", 404, "해당 업무를 찾을 수 없습니다.");
     }
 
     if (task.user_id.toString() !== userId) {
-      throw new Error("Unauthorized해당 업무를 삭제할 권한이 없습니다.");
+      throw new AppError(
+        "Unauthorized",
+        401,
+        "해당 업무를 삭제할 권한이 없습니다."
+      );
     }
 
     await Task.findByIdAndDelete(taskId);
@@ -137,7 +152,7 @@ const TaskService = {
   ) => {
     const task = await Task.findById(taskId);
     if (!task) {
-      throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
+      throw new AppError("Not Found", 404, "해당 업무를 찾을 수 없습니다.");
     }
 
     const newComment = {
@@ -159,16 +174,20 @@ const TaskService = {
   ) => {
     const task = await Task.findById(taskId);
     if (!task) {
-      throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
+      throw new AppError("Not Found", 404, "해당 업무를 찾을 수 없습니다.");
     }
 
     const comment = task.comments!.id(commentId);
     if (!comment) {
-      throw new Error("Not Found+해당 댓글을 찾을 수 없습니다.");
+      throw new AppError("Not Found", 404, "해당 댓글을 찾을 수 없습니다.");
     }
 
     if (comment.user_id.toString() !== userId) {
-      throw new Error(" Unauthorized+해당 댓글을 수정할 권한이 없습니다.");
+      throw new AppError(
+        "Unauthorized",
+        401,
+        "해당 댓글을 수정할 권한이 없습니다."
+      );
     }
 
     comment.commentContent = commentData.commentContent;
@@ -185,7 +204,7 @@ const TaskService = {
   ) => {
     const task = await Task.findById(taskId);
     if (!task) {
-      throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
+      throw new AppError("Not Found", 404, "해당 업무를 찾을 수 없습니다.");
     }
 
     const commentIndex = task.comments!.findIndex((comment) =>
@@ -193,13 +212,17 @@ const TaskService = {
     );
 
     if (commentIndex === -1) {
-      throw new Error("Not Found+해당 댓글을 찾을 수 없습니다.");
+      throw new AppError("Not Found", 404, "해당 댓글을 찾을 수 없습니다.");
     }
 
     const comment = task.comments![commentIndex];
 
     if (comment.user_id.toString() !== userId) {
-      throw new Error(" Unauthorized+해당 댓글을 수정할 권한이 없습니다.");
+      throw new AppError(
+        "Unauthorized",
+        401,
+        "해당 댓글을 삭제할 권한이 없습니다."
+      );
     }
 
     task.comments!.splice(commentIndex, 1);
