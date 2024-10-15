@@ -347,8 +347,8 @@ userRouter.post("/request-password-reset", UserController.requestPasswordReset);
 // 비밀번호 재설정
 /**
  * @swagger
- * /users/reset-password/{token}:
- *   post:
+ * /users/reset-pw:
+ *   put:
  *     summary: 비밀번호 재설정
  *     description: 토큰을 사용하여 비밀번호를 재설정합니다.
  *     tags: [Users]
