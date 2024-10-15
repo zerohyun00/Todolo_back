@@ -1,37 +1,3 @@
-// import { ErrorRequestHandler } from "express";
-
-// export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-//   let [statusError, message] = err.message.split("+");
-//   let statusCode: number;
-
-//   if (!message && !statusError) {
-//     message = "해당 접속 URL을 찾을 수 없습니다.";
-//     statusError = "Not Found";
-//   }
-
-//   switch (statusError) {
-//     case "Bad Request":
-//       statusCode = 400;
-//       break;
-//     case "Not Found":
-//       statusCode = 404;
-//       break;
-//     case "Forbidden":
-//       statusCode = 403;
-//       break;
-//     case "Unauthorized":
-//       statusCode = 401;
-//       break;
-//     default:
-//       statusCode = 500;
-//       message = "Internal Server Error";
-//       console.error(err.stack);
-//       break;
-//   }
-
-//   res.status(statusCode).json({ status_code: statusCode, message });
-// };
-
 // 한인호 코치님 코드리뷰 추천
 import { ErrorRequestHandler } from "express";
 
