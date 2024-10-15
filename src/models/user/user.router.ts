@@ -385,7 +385,7 @@ userRouter.post("/request-password-reset", UserController.requestPasswordReset);
  *                   type: string
  *                   example: "Internal Server Error"
  */
-userRouter.post("/reset-pw", UserController.resetPassword);
+userRouter.put("/reset-pw", UserController.resetPassword);
 
 // 로그인
 /**
