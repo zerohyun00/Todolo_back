@@ -72,3 +72,31 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
   res.status(statusCode).json({ status_code: statusCode, message });
 };
+
+/*
+
+
+import { ErrorRequestHandler } from "express";
+
+
+export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  let statusCode = err.statusCode || 500;  statusCode가 있으면 사용, 없으면 500
+  let message = err.message || "Internal Server Error";  
+
+  if (statusCode === 500) {
+    console.error(err.stack);  
+  }
+
+  res.status(statusCode).json({ status_code: statusCode, message });
+};
+
+// 에러 발생 시 상태 코드와 함께 에러를 던지는 방법
+// 예시: Bad Request 에러를 발생시키는 부분
+if (!someCondition) {
+  const error = new Error("Bad Request");  
+  (error as any).statusCode = 400;  
+  next(error);  
+}
+
+
+*/

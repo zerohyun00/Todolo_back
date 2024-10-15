@@ -47,6 +47,7 @@ const TeamService = {
             $push: {
               _id: "$projects._id",
               title: "$projects.title",
+              projectColor: "$projects.projectColor",
               created_AT: "$projects.createdAt",
               updated_AT: "$projects.updatedAt",
               tasks: {

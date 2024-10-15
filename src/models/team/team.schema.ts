@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
+import { ITeam } from "../../interface/ITeam";
 
-const teamSchema = new Schema(
+const teamSchema = new Schema<ITeam>(
   {
     user_id: { type: Schema.Types.ObjectId, ref: "User", required: true },
     members: [{ type: Schema.Types.ObjectId, ref: "User" }],
@@ -11,4 +12,4 @@ const teamSchema = new Schema(
   { timestamps: true }
 );
 
-export const Team = model("Team", teamSchema);
+export const Team = model<ITeam>("Team", teamSchema);

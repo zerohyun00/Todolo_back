@@ -28,7 +28,8 @@ const ImageController = {
       }
 
       const image = await ImageService.createImage({
-        user_id: req.body.user_id,
+        // user_id: req.body.user_id,
+        user_id: res.locals.user_id,
         imageUrl: filePath,
       });
       await User.updateOne(

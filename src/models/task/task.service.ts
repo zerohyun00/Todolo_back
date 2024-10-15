@@ -19,6 +19,7 @@ const TaskService = {
         user_id: userId,
         title: taskData.projectTitle,
         team_id: taskData.team_id,
+        projectColor: taskData.projectColor,
       });
       project = await newProject.save();
 

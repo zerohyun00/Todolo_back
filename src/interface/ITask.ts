@@ -10,7 +10,7 @@ export interface ITask extends Document<Types.ObjectId> {
   comments?: Types.DocumentArray<IComment>;
   createdAt: Date;
   updatedAt: Date;
-
+  projectColor: string;
   startDate?: Date;
   endDate?: Date;
   priority?: string;
@@ -25,7 +25,7 @@ export interface ITaskInputDTO {
   project_id: Types.ObjectId;
   title: string;
   content: string;
-
+  projectColor: string;
   startDate?: Date;
   endDate?: Date;
   priority?: string;
