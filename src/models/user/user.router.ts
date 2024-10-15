@@ -51,21 +51,12 @@ const userRouter = Router();
 
 // // 모든 유저 검색
 // userRouter.get("/users", UserController.getAllUsers);
-
-/**
- * @swagger
- * tags:
- *   name: Users
- *   description: 유저 관리 API
- */
-
-// 회원가입
 /**
  * @swagger
  * /users/register:
  *   post:
  *     summary: 회원가입
- *     description: 새로운 유저를 등록하고 선택적으로 프로필 이미지를 업로드합니다.
+ *     description:  response의 invitationToken으로 팀 확정, 새로운 유저를 등록하고 선택적으로 프로필 이미지를 업로드합니다. 이미지를 업로드하지 않으면 avatar는 "N/A"로 설정됩니다.
  *     tags: [Users]
  *     requestBody:
  *       content:
@@ -76,16 +67,20 @@ const userRouter = Router();
  *               name:
  *                 type: string
  *                 description: 유저 이름
+ *                 example: "joogang2"
  *               email:
  *                 type: string
  *                 description: 유저 이메일
+ *                 example: "joogang2@naver.com"
  *               password:
  *                 type: string
  *                 description: 비밀번호
+ *                 example: "songang123!"
  *               avatar:
  *                 type: string
+ *                 description: 프로필 이미지 파일 경로 (이미지 업로드가 없으면 "N/A"로 설정)
  *                 format: binary
- *                 description: 프로필 이미지 (선택)
+ *                 example: "N/A"
  *     responses:
  *       201:
  *         description: 회원가입 성공
@@ -98,16 +93,55 @@ const userRouter = Router();
  *                   type: string
  *                   example: "회원가입 성공"
  *                 data:
- *                   $ref: '#/components/schemas/User'
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       description: 유저 이름
+ *                       example: "joogang2"
+ *                     email:
+ *                       type: string
+ *                       description: 유저 이메일
+ *                       example: "joogang2@naver.com"
+ *                     password:
+ *                       type: string
+ *                       description: 해싱된 비밀번호
+ *                       example: "$2b$10$..."
+ *                     avatar:
+ *                       type: string
+ *                       description: 프로필 이미지 경로 (없으면 "N/A")
+ *                       example: "N/A"
+ *                     refreshToken:
+ *                       type: string
+ *                       description: 리프레시 토큰 (처음엔 null)
+ *                       example: null
+ *                     invitationToken:
+ *                       type: string
+ *                       description: 초대 토큰
+ *                       example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6..."
+ *                     resetToken:
+ *                       type: string
+ *                       description: 비밀번호 재설정 토큰 (없으면 null)
+ *                       example: null
+ *                     _id:
+ *                       type: string
+ *                       description: 유저 ID
+ *                       example: "670e26554ffbc9953ee9da50"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       description: 생성 시간
+ *                       example: "2024-10-15T08:22:45.503Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       description: 수정 시간
+ *                       example: "2024-10-15T08:22:45.524Z"
  */
-userRouter.post(
-  "/register",
 
-  upload.single("avatar"),
-  (req, res, next) => {
-    UserController.register(req, res, next);
-  }
-);
+userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
+  UserController.register(req, res, next);
+});
 
 /**
  * @swagger
@@ -178,6 +212,13 @@ userRouter.post(
  *     summary: 팀 소속 확인
  *     description: 이메일로 발송된 토큰을 통해 팀 소속을 확인하고 업데이트합니다.
  *     tags: [Users]
+ *     parameters:
+ *       - in:
+ *         name:
+ *         schema:
+ *           type:
+ *         required:
+ *         description:
  *     requestBody:
  *       required: true
  *       content:
@@ -192,10 +233,11 @@ userRouter.post(
  *               team:
  *                 type: string
  *                 description: 팀 이름
- *                 example: "팀 이름"
- *             required:
- *               - token
- *               - team
+ *                 example: "2팀"
+ *               token:
+ *                 type: string
+ *                 description: 팀 확인 토큰
+ *                 example: "string"
  *     responses:
  *       200:
  *         description: 팀 소속 업데이트 성공
@@ -259,7 +301,7 @@ userRouter.post("/confirm-team", (req, res, next) => {
  * @swagger
  * /users/request-password-reset:
  *   post:
- *     summary: 비밀번호 재설정 요청
+ *     summary: 비밀번호 재설정 이메일 전송
  *     description: 비밀번호 재설정을 위한 이메일을 전송합니다.
  *     tags: [Users]
  *     requestBody:
@@ -272,7 +314,6 @@ userRouter.post("/confirm-team", (req, res, next) => {
  *               email:
  *                 type: string
  *                 description: 유저 이메일
- *                 example: "user@example.com"
  *     responses:
  *       200:
  *         description: 비밀번호 재설정 이메일 전송 완료
@@ -310,11 +351,18 @@ userRouter.post("/request-password-reset", UserController.requestPasswordReset);
 // 비밀번호 재설정
 /**
  * @swagger
- * /users/reset-password:
+ * /users/reset-password/{token}:
  *   post:
  *     summary: 비밀번호 재설정
  *     description: 토큰을 사용하여 비밀번호를 재설정합니다.
  *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: 비밀번호 재설정 토큰
  *     requestBody:
  *       required: true
  *       content:
@@ -329,10 +377,6 @@ userRouter.post("/request-password-reset", UserController.requestPasswordReset);
  *               newPassword:
  *                 type: string
  *                 description: 새로운 비밀번호
- *                 example: "new_password123"
- *             required:
- *               - token
- *               - newPassword
  *     responses:
  *       200:
  *         description: 비밀번호 재설정 성공
@@ -344,46 +388,6 @@ userRouter.post("/request-password-reset", UserController.requestPasswordReset);
  *                 message:
  *                   type: string
  *                   example: "비밀번호가 성공적으로 변경되었습니다."
- *       400:
- *         description: 잘못된 요청
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Bad Request+토큰이 필요합니다."
- *       401:
- *         description: 인증 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Unauthorized+토큰이 유효하지 않습니다."
- *       404:
- *         description: 사용자 미존재
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Not Found+사용자를 찾을 수 없습니다."
- *       500:
- *         description: 서버 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Internal Server Error"
  */
 userRouter.put("/reset-pw", UserController.resetPassword);
 
@@ -405,11 +409,9 @@ userRouter.put("/reset-pw", UserController.resetPassword);
  *               email:
  *                 type: string
  *                 description: 유저 이메일
- *                 example: "user@example.com"
  *               password:
  *                 type: string
  *                 description: 비밀번호
- *                 example: "password123"
  *     responses:
  *       200:
  *         description: 로그인 성공
@@ -424,43 +426,9 @@ userRouter.put("/reset-pw", UserController.resetPassword);
  *                 data:
  *                   type: object
  *                   description: 로그인한 유저 정보
- *                   properties:
- *                     name:
- *                       type: string
- *                       example: "John Doe"
- *                     email:
- *                       type: string
- *                       example: "user@example.com"
- *                     avatar:
- *                       type: string
- *                       example: "/uploads/avatar.jpg"
- *                     team:
- *                       type: string
- *                       example: "개발팀"
  *                 accessToken:
  *                   type: string
  *                   description: 발급된 액세스 토큰
- *                   example: "your_access_token_here"
- *       401:
- *         description: 인증 실패
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Unauthorized+아이디 혹은 패스워드를 확인해주세요"
- *       500:
- *         description: 서버 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Internal Server Error"
  */
 userRouter.post("/login", UserController.logIn);
 
@@ -470,7 +438,7 @@ userRouter.post("/login", UserController.logIn);
  * /users/logout:
  *   post:
  *     summary: 로그아웃
- *     description: 유저를 로그아웃시키고 리프레시 토큰을 삭제합니다.
+ *     description: Headers에 Bearer token 필요, 유저를 로그아웃시키고 리프레시 토큰을 삭제합니다.
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
@@ -514,7 +482,7 @@ userRouter.post("/logout", authMiddleware, UserController.logout);
  * /users/update/{userId}:
  *   put:
  *     summary: 유저 정보 업데이트
- *     description: 유저의 비밀번호 또는 프로필 이미지를 업데이트합니다.
+ *     description: 유저의 비밀번호 또는 프로필 이미지를 업데이트합니다. (form-data 형식 사용)
  *     tags: [Users]
  *     parameters:
  *       - in: path
@@ -524,6 +492,7 @@ userRouter.post("/logout", authMiddleware, UserController.logout);
  *         required: true
  *         description: 유저 ID
  *     requestBody:
+ *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
@@ -532,7 +501,6 @@ userRouter.post("/logout", authMiddleware, UserController.logout);
  *               password:
  *                 type: string
  *                 description: 새로운 비밀번호 (선택적)
- *                 example: "new_password123"
  *               avatar:
  *                 type: string
  *                 format: binary
@@ -637,39 +605,10 @@ userRouter.put(
  *                   type: string
  *                   example: "유저 검색 성공"
  *                 data:
- *                   type: object
- *                   properties:
- *                     users:
- *                       type: array
- *                       items:
- *                         $ref: '#/components/schemas/User'
- *                     totalPages:
- *                       type: integer
- *                       example: 5
- *                     currentPage:
- *                       type: integer
- *                       example: 1
- *       404:
- *         description: 검색된 유저 없음
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Not Found+해당 유저를 찾을 수 없습니다."
- *       500:
- *         description: 서버 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Internal Server Error"
+ *                   type: array
+ *                   description: 검색된 유저 목록
  */
+
 userRouter.get("/search", authMiddleware, UserController.findUser);
 
 // 모든 유저 검색
@@ -705,39 +644,10 @@ userRouter.get("/search", authMiddleware, UserController.findUser);
  *                   type: string
  *                   example: "모든 유저 조회 성공"
  *                 data:
- *                   type: object
- *                   properties:
- *                     users:
- *                       type: array
- *                       items:
- *                         $ref: '#/components/schemas/User'
- *                     totalPages:
- *                       type: integer
- *                       example: 10
- *                     currentPage:
- *                       type: integer
- *                       example: 1
- *       404:
- *         description: 유저 없음
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Not Found+해당 유저를 찾을 수 없습니다."
- *       500:
- *         description: 서버 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Internal Server Error"
+ *                   type: array
+ *                   description: 유저 목록
  */
+
 userRouter.get("/users", UserController.getAllUsers);
 
 export default userRouter;
