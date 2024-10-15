@@ -6,13 +6,6 @@ import { authMiddleware } from "../../middleware/auth.middleware";
 
 const userRouter = Router();
 
-/**
- * @swagger
- * tags:
- *   name: Users
- *   description: 유저 관리 API
- */
-
 // //가입
 // userRouter.post(
 //   "/register",
@@ -51,6 +44,13 @@ const userRouter = Router();
 
 // // 모든 유저 검색
 // userRouter.get("/users", UserController.getAllUsers);
+
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: 유저 관리 API
+ */
 /**
  * @swagger
  * /users/register:
@@ -226,10 +226,6 @@ userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
  *           schema:
  *             type: object
  *             properties:
- *               token:
- *                 type: string
- *                 description: 팀 확인 토큰
- *                 example: "your_confirmation_token_here"
  *               team:
  *                 type: string
  *                 description: 팀 이름
