@@ -1,7 +1,7 @@
 import { Router } from "express";
 import UserController from "./user.controller";
 import { upload } from "../image/image.controller"; // Multer 설정
-import { userValidator } from "../../middleware/validators/user.validator";
+
 import { authMiddleware } from "../../middleware/auth.middleware";
 
 const userRouter = Router();
@@ -102,7 +102,7 @@ const userRouter = Router();
  */
 userRouter.post(
   "/register",
-  userValidator.signUp,
+
   upload.single("avatar"),
   (req, res, next) => {
     UserController.register(req, res, next);
@@ -462,7 +462,7 @@ userRouter.post("/reset-pw", UserController.resetPassword);
  *                   type: string
  *                   example: "Internal Server Error"
  */
-userRouter.post("/login", userValidator.logIn, UserController.logIn);
+userRouter.post("/login", UserController.logIn);
 
 // 로그아웃
 /**
