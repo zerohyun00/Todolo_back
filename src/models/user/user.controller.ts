@@ -1,6 +1,8 @@
 import express, { NextFunction, Request, Response } from "express";
 import UserService from "./user.service";
 import { generateToken, verifyToken } from "../../utils/jwt";
+import { User } from "./user.schema";
+import jwt from "jsonwebtoken";
 
 const UserController = {
   register: async (
@@ -19,6 +21,44 @@ const UserController = {
       next(err);
     }
   },
+
+  // 회원가입 시 인비테이션 토큰 발급 소속팀 회원가입 페이지 보면서 해야할 듯
+  // sendTeamConfirmationEmail: async (
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ) => {
+  //   try {
+  //     const { userId } = req.body;
+
+  //     if (!userId) {
+  //       return res
+  //         .status(400)
+  //         .send({ message: "Bad Request+userId가 필요합니다." });
+  //     }
+
+  //     const user = await User.findById(userId);
+  //     if (!user) {
+  //       return res
+  //         .status(404)
+  //         .send({ message: "Not Found+사용자를 찾을 수 없습니다." });
+  //     }
+
+  //     const token = jwt.sign(
+  //       { id: user._id },
+  //       process.env.JWT_SECRET || "confirmationToken",
+  //       { expiresIn: "1d" }
+  //     );
+
+  //     await UserService.sendTeamConfirmationEmail(user, token);
+
+  //     res
+  //       .status(200)
+  //       .send({ message: "팀 소속 확인 이메일이 전송되었습니다." });
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // },
   confirmTeam: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { token } = req.body;
