@@ -13,7 +13,7 @@ const TeamController = async (
   try {
     const teamId = req.params.id;
     const teamDetails = await TeamService.findTeamInfo(teamId);
-    res.status(200).json(teamDetails);
+    res.status(200).send({ message: "조회 성공", data: teamDetails });
   } catch (err) {
     next(err);
   }

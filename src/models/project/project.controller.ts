@@ -19,7 +19,7 @@ const ProjectController = {
 
       const project = await ProjectService.createProject(projectData, userId);
 
-      res.status(201).json(project);
+      res.status(201).send({ data: project });
     } catch (err) {
       next(err);
     }
@@ -29,7 +29,7 @@ const ProjectController = {
     try {
       const { id } = req.params;
       const updatedProject = await ProjectService.updateProject(id, req.body);
-      res.json(updatedProject);
+      res.send({ data: updatedProject });
     } catch (err) {
       next(err);
     }
@@ -43,7 +43,7 @@ const ProjectController = {
     try {
       const { id: userId } = req.params;
       const projects = await ProjectService.findProjectByUser(userId);
-      res.status(200).json({ message: "프로젝트 조회 성공", data: projects });
+      res.status(200).send({ message: "프로젝트 조회 성공", data: projects });
     } catch (err) {
       next(err);
     }
@@ -52,7 +52,7 @@ const ProjectController = {
   getAllProjects: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const projects = await ProjectService.getAllProjects();
-      res.json(projects);
+      res.send({ data: projects });
     } catch (err) {
       next(err);
     }
@@ -64,7 +64,7 @@ const ProjectController = {
       await ProjectService.deleteProject(id);
       res
         .status(204)
-        .json({ message: "프로젝트가 성공적으로 삭제되었습니다." });
+        .send({ message: "프로젝트가 성공적으로 삭제되었습니다." });
     } catch (err) {
       next(err);
     }
@@ -80,7 +80,7 @@ const ProjectController = {
       const projects = await ProjectService.findProjectWithTasksByUser(userId);
       res
         .status(200)
-        .json({ message: "프로젝트 및 업무 조회 성공", data: projects });
+        .send({ message: "프로젝트 및 업무 조회 성공", data: projects });
     } catch (err) {
       next(err);
     }

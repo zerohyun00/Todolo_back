@@ -36,7 +36,7 @@ const ImageController = {
         { _id: req.body.user_id },
         { $set: { avatar: image.imageUrl } }
       );
-      res.status(201).json(image);
+      res.status(201).send({ data: image });
     } catch (err) {
       next(err);
     }

@@ -27,7 +27,7 @@ const TaskService = {
       await Team.findByIdAndUpdate(
         taskData.team_id,
         { $push: { projects: project._id } },
-        { new: true, useFindAndModify: false }
+        { new: true }
       );
     } else {
       throw new AppError(

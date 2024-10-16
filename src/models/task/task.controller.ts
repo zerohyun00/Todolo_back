@@ -44,7 +44,9 @@ const TaskController = {
         new Types.ObjectId(taskId),
         userId
       );
-      res.status(200).send(result);
+      res
+        .status(204)
+        .send({ message: "업무가 성공적으로 삭제되었습니다.", data: result });
     } catch (err) {
       next(err);
     }

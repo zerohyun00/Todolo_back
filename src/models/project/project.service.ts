@@ -21,7 +21,7 @@ const ProjectService = {
     await Team.findByIdAndUpdate(
       projectData.team_id,
       { $push: { projects: savedProject._id } },
-      { new: true, useFindAndModify: false }
+      { new: true }
     );
 
     return savedProject;
