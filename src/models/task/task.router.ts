@@ -1,42 +1,29 @@
-// import { Router } from "express";
-// import TaskController from "./task.controller";
-// import { authMiddleware } from "../../../middleware/auth.middleware";
-
-// const TaskRouter = Router();
-
-// // 업무 생성
-// TaskRouter.post("/", authMiddleware, TaskController.createTask);
-
-// // 업무 수정
-// TaskRouter.put("/:taskId", authMiddleware, TaskController.updateTask);
-
-// // 업무 삭제
-// TaskRouter.delete("/:taskId", authMiddleware, TaskController.deleteTask);
-
-// // 댓글 추가
-// TaskRouter.post("/:taskId/comments", authMiddleware, TaskController.addComment);
-
-// // 댓글 수정
-// TaskRouter.put(
-//   "/:taskId/comments/:commentId",
-//   authMiddleware,
-//   TaskController.updateComment
-// );
-
-// // 댓글 삭제
-// TaskRouter.delete(
-//   "/:taskId/comments/:commentId",
-//   authMiddleware,
-//   TaskController.deleteComment
-// );
-
-// export default TaskRouter;
-
 import { Router } from "express";
 import TaskController from "./task.controller";
 import { authMiddleware } from "../../middleware/auth.middleware";
 
 const TaskRouter = Router();
+
+// 업무생성
+TaskRouter.post("/", authMiddleware, TaskController.createTask);
+// 업무수정
+TaskRouter.put("/:taskId", authMiddleware, TaskController.updateTask);
+// 업무삭제
+TaskRouter.delete("/:taskId", authMiddleware, TaskController.deleteTask);
+// 댓글생성
+TaskRouter.post("/:taskId/comments", authMiddleware, TaskController.addComment);
+// 댓글수정
+TaskRouter.put(
+  "/:taskId/comments/:commentId",
+  authMiddleware,
+  TaskController.updateComment
+);
+// 댓글삭제
+TaskRouter.delete(
+  "/:taskId/comments/:commentId",
+  authMiddleware,
+  TaskController.deleteComment
+);
 
 /**
  * @swagger
@@ -63,6 +50,10 @@ const TaskRouter = Router();
  *                 type: string
  *                 description: 업무 제목
  *                 example: "A project of C task"
+ *               projectColor:
+ *                 type: string
+ *                 description: 프로젝트 색상
+ *                 example: "ff5733"
  *               content:
  *                 type: string
  *                 description: 업무 내용
@@ -117,6 +108,10 @@ const TaskRouter = Router();
  *                       type: string
  *                       description: 업무 생성한 유저 ID
  *                       example: "670d38c3678f3611689915ba"
+ *                     projectColor:
+ *                       type: string
+ *                       description: 생성된 프로젝트의 색상
+ *                       example: "ff5733"
  *                     project_id:
  *                       type: string
  *                       description: 프로젝트 ID
@@ -176,7 +171,6 @@ const TaskRouter = Router();
  *                       type: number
  *                       example: 0
  */
-TaskRouter.post("/", authMiddleware, TaskController.createTask);
 
 /**
  * @swagger
@@ -312,7 +306,6 @@ TaskRouter.post("/", authMiddleware, TaskController.createTask);
  *                       type: number
  *                       example: 0
  */
-TaskRouter.put("/:taskId", authMiddleware, TaskController.updateTask);
 
 /**
  * @swagger
@@ -340,7 +333,6 @@ TaskRouter.put("/:taskId", authMiddleware, TaskController.updateTask);
  *                   type: string
  *                   example: "업무가 성공적으로 삭제되었습니다."
  */
-TaskRouter.delete("/:taskId", authMiddleware, TaskController.deleteTask);
 
 /**
  * @swagger
@@ -381,7 +373,6 @@ TaskRouter.delete("/:taskId", authMiddleware, TaskController.deleteTask);
  *                   type: object
  *                   description: 생성된 댓글 데이터
  */
-TaskRouter.post("/:taskId/comments", authMiddleware, TaskController.addComment);
 
 /**
  * @swagger
@@ -428,11 +419,6 @@ TaskRouter.post("/:taskId/comments", authMiddleware, TaskController.addComment);
  *                   type: object
  *                   description: 수정된 댓글 데이터
  */
-TaskRouter.put(
-  "/:taskId/comments/:commentId",
-  authMiddleware,
-  TaskController.updateComment
-);
 
 /**
  * @swagger
@@ -466,10 +452,5 @@ TaskRouter.put(
  *                   type: string
  *                   example: "댓글이 삭제되었습니다."
  */
-TaskRouter.delete(
-  "/:taskId/comments/:commentId",
-  authMiddleware,
-  TaskController.deleteComment
-);
 
 export default TaskRouter;

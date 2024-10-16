@@ -1,42 +1,20 @@
-// import { Router } from "express";
-// import ProjectController from "./project.controller";
-// import { authMiddleware } from "../../../middleware/auth.middleware";
-
-// const ProjectRouter = Router();
-
-// // 프로젝트 생성
-
-// ProjectRouter.post("/", authMiddleware, ProjectController.createProject);
-
-// // 특정 유저 프로젝트 조회
-
-// ProjectRouter.get("/:id", authMiddleware, ProjectController.findProjectByUser);
-
-// // 프로젝트 수정
-
-// ProjectRouter.put("/:id", authMiddleware, ProjectController.updateProject);
-
-// // 모든 프로젝트 조회
-
-// ProjectRouter.get("/", authMiddleware, ProjectController.getAllProjects);
-
-// // 특정 프로젝트 삭제
-
-// ProjectRouter.delete("/:id", authMiddleware, ProjectController.deleteProject);
-
-// ProjectRouter.get(
-//   "/user/:id",
-//   authMiddleware,
-//   ProjectController.findProjectWithTasksByUser
-// );
-
-// export default ProjectRouter;
-
 import { Router } from "express";
 import ProjectController from "./project.controller";
 import { authMiddleware } from "../../middleware/auth.middleware";
 
 const ProjectRouter = Router();
+
+ProjectRouter.post("/", authMiddleware, ProjectController.createProject);
+
+ProjectRouter.get("/", authMiddleware, ProjectController.getAllProjects);
+
+ProjectRouter.get(
+  "/user/:id",
+  authMiddleware,
+  ProjectController.findProjectWithTasksByUser
+);
+
+export default ProjectRouter;
 
 /**
  * @swagger
@@ -80,7 +58,6 @@ const ProjectRouter = Router();
  *                   type: object
  *                   description: 생성된 프로젝트 데이터
  */
-ProjectRouter.post("/", authMiddleware, ProjectController.createProject);
 
 /**
  * @swagger
@@ -104,7 +81,6 @@ ProjectRouter.post("/", authMiddleware, ProjectController.createProject);
  *                   type: array
  *                   description: 조회된 프로젝트 목록
  */
-ProjectRouter.get("/", authMiddleware, ProjectController.getAllProjects);
 
 /**
  * @swagger
@@ -135,10 +111,3 @@ ProjectRouter.get("/", authMiddleware, ProjectController.getAllProjects);
  *                   type: array
  *                   description: 조회된 프로젝트 및 업무 목록
  */
-ProjectRouter.get(
-  "/user/:id",
-  authMiddleware,
-  ProjectController.findProjectWithTasksByUser
-);
-
-export default ProjectRouter;

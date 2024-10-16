@@ -15,6 +15,8 @@ import { authMiddleware } from "../../middleware/auth.middleware";
 
 const teamRouter = Router();
 
+teamRouter.get("/:id", authMiddleware, TeamController);
+
 /**
  * @swagger
  * /teams/{id}:
@@ -146,6 +148,5 @@ const teamRouter = Router();
  *       500:
  *         description: 서버 오류
  */
-teamRouter.get("/:id", authMiddleware, TeamController);
 
 export default teamRouter;

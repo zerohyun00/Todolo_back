@@ -6,44 +6,50 @@ import { authMiddleware } from "../../middleware/auth.middleware";
 
 const userRouter = Router();
 
-// //가입
-// userRouter.post(
-//   "/register",
-//   userValidator.signUp,
-//   upload.single("avatar"),
-//   (req, res, next) => {
-//     UserController.register(req, res, next);
-//   }
-// );
+//가입
+userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
+  UserController.register(req, res, next);
+});
 
-// // 팀 확인
-// userRouter.post("/confirm-team/:token", UserController.confirmTeam);
+// 팀 확인 이메일 요청
+userRouter.post(
+  "/send-confirmation-email",
+  authMiddleware,
+  UserController.sendTeamConfirmationEmail
+);
 
-// // 비밀번호 재설정 요청
-// userRouter.post("/request-password-reset", UserController.requestPasswordReset);
+// 팀 확인
+userRouter.post("/confirm-team", (req, res, next) => {
+  UserController.confirmTeam(req, res, next);
+});
 
-// // 비밀번호 재설정
-// userRouter.post("/reset-password/:token", UserController.resetPassword);
+// 비밀번호 재설정 요청
+userRouter.post("/request-password-reset", UserController.requestPasswordReset);
 
-// // 로그인
-// userRouter.post("/login", userValidator.logIn, UserController.logIn);
+// 비밀번호 재설정
+userRouter.put("/reset-pw", UserController.resetPassword);
 
-// // 로그아웃
-// userRouter.post("/logout", UserController.logout);
+// 로그인
+userRouter.post("/login", UserController.logIn);
 
-// // 유저 정보 업데이트 (비밀번호, 아바타 업데이트)
-// userRouter.put(
-//   "/update/:userId",
-//   upload.single("avatar"),
-//   authMiddleware,
-//   UserController.updateUserInformation
-// );
+// 로그아웃
+userRouter.post("/logout", authMiddleware, UserController.logout);
 
-// // 특정 유저 검색  이름으로 검색 (소속 팀 기준)
-// userRouter.get("/search", authMiddleware, UserController.findUser);
+// 유저 정보 업데이트 (비밀번호, 아바타 업데이트)
+userRouter.put(
+  "/update/:userId",
+  upload.single("avatar"),
+  authMiddleware,
+  UserController.updateUserInformation
+);
 
-// // 모든 유저 검색
-// userRouter.get("/users", UserController.getAllUsers);
+// 특정 유저 검색  이름으로 검색 (소속 팀 기준)
+userRouter.get("/search", authMiddleware, UserController.findUser);
+
+// 모든 유저 검색
+userRouter.get("/users", UserController.getAllUsers);
+
+export default userRouter;
 
 /**
  * @swagger
@@ -139,28 +145,13 @@ const userRouter = Router();
  *                       example: "2024-10-15T08:22:45.524Z"
  */
 
-userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
-  UserController.register(req, res, next);
-});
-
 /**
  * @swagger
- * /users/send-team-confirmation:
+ * /users/send-confirmation-email:
  *   post:
  *     summary: 팀 소속 확인 이메일 전송
- *     description: 사용자의 팀 소속 확인을 위한 이메일을 전송합니다.
+ *     description: 로그인한 유저의 팀 소속 확인을 위한 이메일을 전송합니다.
  *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               userId:
- *                 type: string
- *                 description: 이메일을 전송할 유저의 ID
- *                 example: "670d0e9201510d7c9ec3597d"
  *     responses:
  *       200:
  *         description: 팀 소속 확인 이메일 전송 성공
@@ -171,9 +162,9 @@ userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "팀 소속 확인 이메일이 전송되었습니다."
+ *                   example: 팀 소속 확인 이메일이 전송되었습니다.
  *       400:
- *         description: 잘못된 요청
+ *         description: 잘못된 요청 (유효하지 않은 사용자 ID)
  *         content:
  *           application/json:
  *             schema:
@@ -181,7 +172,7 @@ userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Bad Request+userId가 필요합니다."
+ *                   example: Bad Request+유효한 사용자 ID를 입력해 주세요.
  *       404:
  *         description: 사용자 미존재
  *         content:
@@ -191,9 +182,9 @@ userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Not Found+사용자를 찾을 수 없습니다."
- *       500:
- *         description: 서버 오류
+ *                   example: Not Found+사용자를 찾을 수 없습니다.
+ *       401:
+ *         description: 인증 오류 (초대 토큰 없음)
  *         content:
  *           application/json:
  *             schema:
@@ -201,14 +192,8 @@ userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Internal Server Error"
+ *                   example: Unauthorized+초대 토큰이 없습니다. 다시 시도하세요.
  */
-
-userRouter.post(
-  "/send-confirmation-email",
-  authMiddleware,
-  UserController.sendTeamConfirmationEmail
-);
 
 // 팀 소속 확인
 /**
@@ -294,9 +279,6 @@ userRouter.post(
  *                   type: string
  *                   example: "Internal Server Error"
  */
-userRouter.post("/confirm-team", (req, res, next) => {
-  UserController.confirmTeam(req, res, next);
-});
 
 // 비밀번호 재설정 요청
 /**
@@ -348,7 +330,6 @@ userRouter.post("/confirm-team", (req, res, next) => {
  *                   type: string
  *                   example: "Internal Server Error"
  */
-userRouter.post("/request-password-reset", UserController.requestPasswordReset);
 
 // 비밀번호 재설정
 /**
@@ -391,7 +372,6 @@ userRouter.post("/request-password-reset", UserController.requestPasswordReset);
  *                   type: string
  *                   example: "비밀번호가 성공적으로 변경되었습니다."
  */
-userRouter.put("/reset-pw", UserController.resetPassword);
 
 // 로그인
 /**
@@ -432,7 +412,6 @@ userRouter.put("/reset-pw", UserController.resetPassword);
  *                   type: string
  *                   description: 발급된 액세스 토큰
  */
-userRouter.post("/login", UserController.logIn);
 
 // 로그아웃
 /**
@@ -476,7 +455,6 @@ userRouter.post("/login", UserController.logIn);
  *                   type: string
  *                   example: "Internal Server Error"
  */
-userRouter.post("/logout", authMiddleware, UserController.logout);
 
 // 유저 정보 업데이트
 /**
@@ -559,12 +537,6 @@ userRouter.post("/logout", authMiddleware, UserController.logout);
  *                   type: string
  *                   example: "Internal Server Error"
  */
-userRouter.put(
-  "/update/:userId",
-  upload.single("avatar"),
-  authMiddleware,
-  UserController.updateUserInformation
-);
 
 // 특정 유저 검색
 /**
@@ -611,8 +583,6 @@ userRouter.put(
  *                   description: 검색된 유저 목록
  */
 
-userRouter.get("/search", authMiddleware, UserController.findUser);
-
 // 모든 유저 검색
 /**
  * @swagger
@@ -649,7 +619,3 @@ userRouter.get("/search", authMiddleware, UserController.findUser);
  *                   type: array
  *                   description: 유저 목록
  */
-
-userRouter.get("/users", UserController.getAllUsers);
-
-export default userRouter;
