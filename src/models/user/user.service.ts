@@ -182,7 +182,7 @@ const UserService = {
     user.resetToken = resetToken;
     await user.save();
 
-    const resetLink = `${process.env.RESET_PASSWORD_LINK}`;
+    const resetLink = `${process.env.RESET_PASSWORD_LINK}/${resetToken}`;
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
