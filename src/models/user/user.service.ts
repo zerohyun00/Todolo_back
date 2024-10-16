@@ -12,7 +12,7 @@ const SALT_ROUNDS = 10;
 
 const UserService = {
   register: async (data: IUserInputDTO, filePath?: string) => {
-    const existingUser = await User.findOne({ data: data.email });
+    const existingUser = await User.findOne({ email: data.email });
 
     if (existingUser) {
       throw new AppError("Bad Request", 400, "이미 존재하는 이메일입니다.");
@@ -46,7 +46,6 @@ const UserService = {
 
     await savedUser.save();
 
-    await UserService.sendTeamConfirmationEmail(savedUser, token);
     return {
       ...savedUser.toObject(),
       invitationToken: token,
@@ -54,7 +53,7 @@ const UserService = {
   },
 
   sendTeamConfirmationEmail: async (user: any, token: string) => {
-    const link = `${process.env.CONFIRMATION_TEAM_LINK}/${token}`;
+    const link = `${process.env.CONFIRMATION_TEAM_LINK}`;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",

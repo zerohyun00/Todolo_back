@@ -204,6 +204,12 @@ userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
  *                   example: "Internal Server Error"
  */
 
+userRouter.post(
+  "/send-confirmation-email",
+  authMiddleware,
+  UserController.sendTeamConfirmationEmail
+);
+
 // 팀 소속 확인
 /**
  * @swagger
