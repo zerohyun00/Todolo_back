@@ -142,8 +142,8 @@ const UserService = {
 
       accessToken,
       refreshToken,
-      team: teamData ? teamData.team : null,
-      // team: teamData,
+      // team: teamData ? teamData.team : null,
+      team: teamData,
     };
   },
 
