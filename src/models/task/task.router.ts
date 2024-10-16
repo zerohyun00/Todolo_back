@@ -183,7 +183,7 @@ TaskRouter.delete(
  * /tasks/{taskId}:
  *   put:
  *     summary: 업무 수정
- *     description: 특정 업무를 수정합니다. Headers에 Bearer token 필요.
+ *     description: 특정 업무를 수정합니다. 작성자 또는 업무에 포함된 팀 멤버만 수정 가능합니다. Headers에 Bearer token 필요.
  *     tags: [Tasks]
  *     parameters:
  *       - in: path
@@ -318,7 +318,7 @@ TaskRouter.delete(
  * /tasks/{taskId}:
  *   delete:
  *     summary: 업무 삭제
- *     description: 특정 업무를 삭제합니다.
+ *     description: 특정 업무를 삭제합니다. 작성자 또는 업무에 포함된 팀 멤버만 삭제 가능합니다. Headers에 Bearer token 필요.
  *     tags: [Tasks]
  *     parameters:
  *       - in: path
