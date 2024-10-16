@@ -1,11 +1,17 @@
 import { Router } from "express";
 import TaskController from "./task.controller";
 import { authMiddleware } from "../../middleware/auth.middleware";
+import { teamMembershipValidator } from "../../middleware/validators/team.Membership.validator";
 
 const TaskRouter = Router();
 
 // 업무생성
-TaskRouter.post("/", authMiddleware, TaskController.createTask);
+TaskRouter.post(
+  "/",
+  authMiddleware,
+  teamMembershipValidator,
+  TaskController.createTask
+);
 // 업무수정
 TaskRouter.put("/:taskId", authMiddleware, TaskController.updateTask);
 // 업무삭제

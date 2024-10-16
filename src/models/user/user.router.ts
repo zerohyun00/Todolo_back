@@ -3,13 +3,19 @@ import UserController from "./user.controller";
 import { upload } from "../image/image.controller"; // Multer 설정
 
 import { authMiddleware } from "../../middleware/auth.middleware";
+import { userValidator } from "../../middleware/validators/user.validator";
 
 const userRouter = Router();
 
 //가입
-userRouter.post("/register", upload.single("avatar"), (req, res, next) => {
-  UserController.register(req, res, next);
-});
+userRouter.post(
+  "/register",
+  userValidator.signUp,
+  upload.single("avatar"),
+  (req, res, next) => {
+    UserController.register(req, res, next);
+  }
+);
 
 // 팀 확인 이메일 요청
 userRouter.post(
@@ -30,7 +36,7 @@ userRouter.post("/request-password-reset", UserController.requestPasswordReset);
 userRouter.put("/reset-pw", UserController.resetPassword);
 
 // 로그인
-userRouter.post("/login", UserController.logIn);
+userRouter.post("/login", userValidator.logIn, UserController.logIn);
 
 // 로그아웃
 userRouter.post("/logout", authMiddleware, UserController.logout);
