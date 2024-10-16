@@ -11,16 +11,14 @@ const UserController = {
     res: Response<{ message: string; data?: any }>,
     next: NextFunction
   ) => {
-    console.log("회원가입 API 호출됨");
     try {
       const { ...userData } = req.body;
       const filePath = req.file?.path;
 
       const newUser = await UserService.register(userData, filePath);
-      console.log("회원가입 성공:", newUser);
+
       return res.status(201).send({ message: "회원가입 성공", data: newUser });
     } catch (err) {
-      console.error("회원가입 중 에러 발생:", err);
       next(err);
     }
   },
@@ -31,7 +29,6 @@ const UserController = {
     res: Response,
     next: NextFunction
   ) => {
-    console.log("팀 소속 확인 이메일 발송 API 호출됨");
     try {
       const userId = res.locals.userId;
 
@@ -59,13 +56,11 @@ const UserController = {
       }
 
       await UserService.sendTeamConfirmationEmail(user, token);
-      console.log("이메일 전송 성공");
 
       res
         .status(200)
         .send({ message: "팀 소속 확인 이메일이 전송되었습니다." });
     } catch (err) {
-      console.error("이메일 전송 중 에러 발생:", err);
       next(err);
     }
   },

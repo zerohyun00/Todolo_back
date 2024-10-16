@@ -65,7 +65,6 @@ const UserService = {
       },
     });
 
-    // 팀 소속 한개를 정해서 던져주는 건지 4개중에 하나를 사용자가 선택하는 건지 회의 해봐야 함
     const mailOptions = {
       from: process.env.GOOGLE_EMAIL,
       to: user.email,

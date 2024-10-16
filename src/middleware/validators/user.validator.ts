@@ -9,10 +9,10 @@ export const userValidator = {
 
       // 이메일, 비밀번호, 이름 검증
       const schema = Joi.object({
-        name: Joi.string().min(3).max(30).required().messages({
+        name: Joi.string().min(2).max(10).required().messages({
           "string.empty": "이름을 입력해 주세요.",
-          "string.min": "이름은 최소 3자 이상이어야 합니다.",
-          "string.max": "이름은 최대 30자까지 가능합니다.",
+          "string.min": "이름은 최소 2자 이상이어야 합니다.",
+          "string.max": "이름은 최대 10자까지 가능합니다.",
           "any.required": "이름은 필수 항목입니다.",
         }),
         email: Joi.string()
@@ -26,12 +26,12 @@ export const userValidator = {
             "any.required": "이메일은 필수 항목입니다.",
           }),
         password: Joi.string()
-          .min(10)
+          .max(10)
           .pattern(new RegExp("^(?=.*[!@#$%^&*])"))
           .required()
           .messages({
             "string.empty": "비밀번호를 입력해 주세요.",
-            "string.min": "비밀번호는 최소 10자 이상이어야 합니다.",
+            "string.min": "비밀번호는 최대 9자까지 가능합니다.",
             "string.pattern.base": "비밀번호는 특수문자를 포함해야 합니다.",
             "any.required": "비밀번호는 필수 항목입니다.",
           }),
@@ -67,12 +67,12 @@ export const userValidator = {
             "any.required": "이메일은 필수 항목입니다.",
           }),
         password: Joi.string()
-          .min(10)
+          .max(9)
           .pattern(new RegExp("^(?=.*[!@#$%^&*])"))
           .required()
           .messages({
             "string.empty": "비밀번호를 입력해 주세요.",
-            "string.min": "비밀번호는 최소 10자 이상이어야 합니다.",
+            "string.max": "비밀번호는 최대 9자까지 가능합니다.",
             "string.pattern.base": "비밀번호는 특수문자를 포함해야 합니다.",
             "any.required": "비밀번호는 필수 항목입니다.",
           }),
