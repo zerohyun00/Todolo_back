@@ -16,6 +16,8 @@ const UserService = {
 
     if (existingUser) {
       throw new AppError("Bad Request", 400, "이미 존재하는 이메일입니다.");
+      // 계속 500고유키 에러가 먼저 출력됨, 피드백 주신 것 처럼 몽구스 에러가 계층으로 올라오는 것 같음
+      // try, catch로 한번 더 잡아보는 거 체크해보기
     }
 
     const hashedPassword = await bcrypt.hash(data.password!, SALT_ROUNDS);
