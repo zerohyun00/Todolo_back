@@ -89,12 +89,18 @@ const TaskService = {
     userId: string
   ) => {
     const task = await Task.findById(taskId);
-    // if (!task) {
-    //   throw new Error("Not Found+해당 업무를 찾을 수 없습니다.");
-    // }
 
-    // 업무 작성자만 수정 가능함
-    if (task!.user_id.toString() !== userId) {
+    if (!task) {
+      throw new AppError("Not Found", 404, "해당 업무를 찾을 수 없습니다.");
+    }
+
+    const isAuthorized =
+      task.user_id.toString() === userId ||
+      task.taskMember?.some(
+        (memberId: Types.ObjectId) => memberId.toString() === userId
+      );
+
+    if (!isAuthorized) {
       throw new AppError(
         "Unauthorized",
         401,
@@ -125,7 +131,21 @@ const TaskService = {
       throw new AppError("Not Found", 404, "해당 업무를 찾을 수 없습니다.");
     }
 
-    if (task.user_id.toString() !== userId) {
+    const isAuthorized =
+      task.user_id.toString() === userId ||
+      task.taskMember?.some(
+        (memberId: Types.ObjectId) => memberId.toString() === userId
+      );
+
+    if (!isAuthorized) {
+      throw new AppError(
+        "Unauthorized",
+        401,
+        "해당 업무를 삭제할 권한이 없습니다."
+      );
+    }
+
+    if (!isAuthorized) {
       throw new AppError(
         "Unauthorized",
         401,
@@ -138,7 +158,7 @@ const TaskService = {
   },
 
   /*
-  comment 생성 수정 삭제
+  
 
   업무조회?
   
