@@ -116,7 +116,7 @@ const UserController = {
       const refreshToken = req.cookies.refreshToken;
 
       if (!refreshToken) {
-        res.status(401).json({ message: "리프레시 토큰이 필요합니다." });
+        res.status(401).send({ message: "리프레시 토큰이 필요합니다." });
         return;
       }
 

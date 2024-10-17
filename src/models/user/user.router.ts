@@ -426,6 +426,50 @@ export default userRouter;
  *                   description: 발급된 액세스 토큰
  */
 
+// 토큰재발급
+/**
+ * @swagger
+ * /users/refresh-token:
+ *   post:
+ *     summary: 리프레시 토큰으로 액세스 토큰 재발급
+ *     description: 저장된 리프레시 토큰을 사용해 새로운 액세스 토큰을 발급합니다.
+ *     tags: [Users]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: 새로운 액세스 토큰 발급 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   description: 새로 발급된 액세스 토큰
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       401:
+ *         description: 리프레시 토큰이 없거나 유효하지 않을 때.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "리프레시 토큰이 필요합니다."
+ *       500:
+ *         description: 서버 오류 발생 시.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ */
+
 // 로그아웃
 /**
  * @swagger
