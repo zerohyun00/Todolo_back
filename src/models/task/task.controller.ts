@@ -106,6 +106,28 @@ const TaskController = {
       next(err);
     }
   },
+
+  getTaskByTaskId: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { taskId } = req.params;
+
+      if (!Types.ObjectId.isValid(taskId)) {
+        res.status(400).send({ message: "유효하지 않은 업무 ID입니다." });
+        return;
+      }
+
+      const task = await TaskService.getTaskByTaskId(
+        new Types.ObjectId(taskId)
+      );
+
+      res.status(200).send({
+        message: "업무가 성공적으로 조회되었습니다.",
+        data: task,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 export default TaskController;

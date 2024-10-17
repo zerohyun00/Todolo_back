@@ -251,6 +251,100 @@ const TaskService = {
 
     return { message: "댓글이 성공적으로 삭제되었습니다.", task };
   },
+
+  getTaskByTaskId: async (taskId: Types.ObjectId) => {
+    const taskAggregation = await Task.aggregate([
+      {
+        $match: { _id: new Types.ObjectId(taskId) },
+      },
+      {
+        $lookup: {
+          from: "projects",
+          localField: "project_id",
+          foreignField: "_id",
+          as: "project",
+        },
+      },
+      {
+        $lookup: {
+          from: "teams",
+          localField: "project.team_id",
+          foreignField: "_id",
+          as: "team",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "taskMember",
+          foreignField: "_id",
+          as: "taskMembers",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "comments.user_id",
+          foreignField: "_id",
+          as: "commentUsers",
+        },
+      },
+      {
+        $addFields: {
+          project: { $arrayElemAt: ["$project", 0] },
+          team: { $arrayElemAt: ["$team", 0] },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          content: 1,
+          startDate: 1,
+          endDate: 1,
+          priority: 1,
+          status: 1,
+          taskMembers: 1,
+          project: {
+            title: 1,
+            team_id: 1,
+          },
+          team: {
+            name: 1,
+            _id: 1,
+          },
+          comments: {
+            $map: {
+              input: "$comments",
+              as: "comment",
+              in: {
+                _id: "$$comment._id",
+                commentContent: "$$comment.commentContent",
+                createdAt: "$$comment.createdAt",
+                user: {
+                  $arrayElemAt: [
+                    {
+                      $filter: {
+                        input: "$commentUsers",
+                        as: "user",
+                        cond: { $eq: ["$$user._id", "$$comment.user_id"] },
+                      },
+                    },
+                    0,
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+    ]);
+
+    if (taskAggregation.length === 0) {
+      throw new AppError("Not Found", 404, "해당 업무를 찾을 수 없습니다.");
+    }
+
+    return taskAggregation;
+  },
 };
 
 export default TaskService;
