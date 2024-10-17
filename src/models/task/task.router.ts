@@ -1,37 +1,24 @@
-import { Router } from "express";
-import TaskController from "./task.controller";
-import { authMiddleware } from "../../middleware/auth.middleware";
-import { teamMembershipValidator } from "../../middleware/validators/team.Membership.validator";
+import { Router } from 'express';
+import TaskController from './task.controller';
+import { authMiddleware } from '../../middleware/auth.middleware';
+import { teamMembershipValidator } from '../../middleware/validators/team.Membership.validator';
 
 const TaskRouter = Router();
 
 // 업무생성
-TaskRouter.post(
-  "/",
-  authMiddleware,
-  teamMembershipValidator,
-  TaskController.createTask
-);
+TaskRouter.post('/', authMiddleware, teamMembershipValidator, TaskController.createTask);
 // 업무수정
-TaskRouter.put("/:taskId", authMiddleware, TaskController.updateTask);
+TaskRouter.put('/:taskId', authMiddleware, TaskController.updateTask);
 // 업무삭제
-TaskRouter.delete("/:taskId", authMiddleware, TaskController.deleteTask);
+TaskRouter.delete('/:taskId', authMiddleware, TaskController.deleteTask);
 // 업무 조회
-TaskRouter.get("/:taskId", authMiddleware, TaskController.getTaskByTaskId);
+TaskRouter.get('/:taskId', authMiddleware, TaskController.getTaskByTaskId);
 // 댓글생성
-TaskRouter.post("/:taskId/comments", authMiddleware, TaskController.addComment);
+TaskRouter.post('/:taskId/comments', authMiddleware, TaskController.addComment);
 // 댓글수정
-TaskRouter.put(
-  "/:taskId/comments/:commentId",
-  authMiddleware,
-  TaskController.updateComment
-);
+TaskRouter.put('/:taskId/comments/:commentId', authMiddleware, TaskController.updateComment);
 // 댓글삭제
-TaskRouter.delete(
-  "/:taskId/comments/:commentId",
-  authMiddleware,
-  TaskController.deleteComment
-);
+TaskRouter.delete('/:taskId/comments/:commentId', authMiddleware, TaskController.deleteComment);
 
 /**
  * @swagger
@@ -340,6 +327,97 @@ TaskRouter.delete(
  *                 message:
  *                   type: string
  *                   example: "업무가 성공적으로 삭제되었습니다."
+ */
+
+/**
+ * @swagger
+ * /tasks/{taskId}:
+ *   get:
+ *     summary: 업무 조회
+ *     description: 특정 업무를 조회합니다. Headers에 Bearer token 필요.
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: 조회할 업무 ID
+ *     responses:
+ *       200:
+ *         description: 업무 조회 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "업무가 성공적으로 조회되었습니다."
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: 업무 ID
+ *                         example: "6710a24cdf52cd53f2d9c78c"
+ *                       title:
+ *                         type: string
+ *                         description: 업무 제목
+ *                         example: "작전 하나 멋지게 옷을 입는다"
+ *                       content:
+ *                         type: string
+ *                         description: 업무 내용
+ *                         example: "미소를 뛰우며 다가간다"
+ *                       startDate:
+ *                         type: string
+ *                         format: date-time
+ *                         description: 업무 시작일
+ *                         example: "2024-10-17T00:00:00.000Z"
+ *                       endDate:
+ *                         type: string
+ *                         format: date-time
+ *                         description: 업무 종료일
+ *                         example: "2024-10-25T00:00:00.000Z"
+ *                       status:
+ *                         type: string
+ *                         description: 업무 상태
+ *                         example: "진행 중"
+ *                       priority:
+ *                         type: string
+ *                         description: 우선순위
+ *                         example: "높음"
+ *                       project:
+ *                         type: object
+ *                         properties:
+ *                           team_id:
+ *                             type: string
+ *                             description: 팀 ID
+ *                             example: "6710a1f2df52cd53f2d9c77f"
+ *                           title:
+ *                             type: string
+ *                             description: 프로젝트 제목
+ *                             example: "김영현 여자친구 만들기 대작전"
+ *                       team:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             description: 팀 ID
+ *                             example: "6710a1f2df52cd53f2d9c77f"
+ *                       taskMembers:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                         description: 업무 할당된 유저 ID 배열
+ *                         example: []
+ *                       comments:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                         description: 댓글 배열
  */
 
 /**
