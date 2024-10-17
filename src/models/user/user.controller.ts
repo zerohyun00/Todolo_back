@@ -10,14 +10,15 @@ const UserController = {
     req: Request,
     res: Response<{ message: string; data?: any }>,
     next: NextFunction
-  ) => {
+  ): Promise<void> => {
     try {
       const { ...userData } = req.body;
       const filePath = req.file?.path;
 
       const newUser = await UserService.register(userData, filePath);
 
-      return res.status(201).send({ message: "회원가입 성공", data: newUser });
+      res.status(201).send({ message: "회원가입 성공", data: newUser });
+      return;
     } catch (err) {
       next(err);
     }

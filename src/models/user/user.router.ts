@@ -8,13 +8,12 @@ import { userValidator } from "../../middleware/validators/user.validator";
 const userRouter = Router();
 
 //가입
+
 userRouter.post(
   "/register",
-  userValidator.signUp,
   upload.single("avatar"),
-  (req, res, next) => {
-    UserController.register(req, res, next);
-  }
+  userValidator.signUp,
+  UserController.register
 );
 
 // 팀 확인 이메일 요청
