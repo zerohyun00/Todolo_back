@@ -16,6 +16,8 @@ TaskRouter.post(
 TaskRouter.put("/:taskId", authMiddleware, TaskController.updateTask);
 // 업무삭제
 TaskRouter.delete("/:taskId", authMiddleware, TaskController.deleteTask);
+// 업무 조회
+TaskRouter.get("/:taskId", authMiddleware, TaskController.getTaskByTaskId);
 // 댓글생성
 TaskRouter.post("/:taskId/comments", authMiddleware, TaskController.addComment);
 // 댓글수정
