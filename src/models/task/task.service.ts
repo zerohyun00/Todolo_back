@@ -94,6 +94,10 @@ const TaskService = {
       throw new AppError("Not Found", 404, "해당 업무를 찾을 수 없습니다.");
     }
 
+    if (!Types.ObjectId.isValid(taskId)) {
+      throw new AppError("Bad Request", 400, "유효하지 않은 업무 ID입니다.");
+    }
+
     const isAuthorized =
       task.user_id.toString() === userId ||
       task.taskMember?.some(
