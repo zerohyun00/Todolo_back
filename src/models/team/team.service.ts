@@ -10,6 +10,26 @@ const TeamService = {
 
       {
         $lookup: {
+          from: "users",
+          localField: "members",
+          foreignField: "_id",
+          as: "teamMembers",
+        },
+      },
+      {
+        $project: {
+          "teamMembers._id": 1,
+          "teamMembers.name": 1,
+          "teamMembers.email": 1,
+          "teamMembers.avatar": 1,
+          "teamMembers.password": 1,
+          "teamMembers.createdAt": 1,
+          "teamMembers.updatedAt": 1,
+        },
+      },
+
+      {
+        $lookup: {
           from: "projects",
           localField: "_id",
           foreignField: "team_id",
@@ -43,6 +63,7 @@ const TeamService = {
         $group: {
           _id: "$_id",
           team_name: { $first: "$team" },
+          teamMembers: { $first: "$teamMembers" },
           projects: {
             $push: {
               _id: "$projects._id",
@@ -54,6 +75,8 @@ const TeamService = {
                 _id: "$projects.tasks._id",
                 title: "$projects.tasks.title",
                 content: "$projects.tasks.content",
+                startDate: "$projects.tasks.startDate",
+                endDate: "$projects.tasks.endDate",
                 created_AT: "$projects.tasks.createdAt",
                 updated_AT: "$projects.tasks.updatedAt",
                 status: "$projects.tasks.status",
@@ -75,6 +98,7 @@ const TeamService = {
               cond: { $ne: ["$$project._id", null] },
             },
           },
+          teamMembers: 1,
         },
       },
     ]);

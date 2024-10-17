@@ -10,14 +10,15 @@ const UserController = {
     req: Request,
     res: Response<{ message: string; data?: any }>,
     next: NextFunction
-  ) => {
+  ): Promise<void> => {
     try {
       const { ...userData } = req.body;
       const filePath = req.file?.path;
 
       const newUser = await UserService.register(userData, filePath);
 
-      return res.status(201).send({ message: "회원가입 성공", data: newUser });
+      res.status(201).send({ message: "회원가입 성공", data: newUser });
+      return;
     } catch (err) {
       next(err);
     }
@@ -111,12 +112,13 @@ const UserController = {
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<void> => {
     try {
       const refreshToken = req.cookies.refreshToken;
 
       if (!refreshToken) {
-        return res.status(401).json({ message: "리프레시 토큰이 필요합니다." });
+        res.status(401).send({ message: "리프레시 토큰이 필요합니다." });
+        return;
       }
 
       const decoded = verifyToken(refreshToken);
@@ -124,6 +126,7 @@ const UserController = {
 
       const newAccessToken = generateToken(userId);
       res.status(200).send({ accessToken: newAccessToken });
+      return;
     } catch (err) {
       next(err);
     }
