@@ -75,6 +75,8 @@ const TeamService = {
                 _id: "$projects.tasks._id",
                 title: "$projects.tasks.title",
                 content: "$projects.tasks.content",
+                startDate: "$projects.tasks.startDate",
+                endDate: "$projects.tasks.endDate",
                 created_AT: "$projects.tasks.createdAt",
                 updated_AT: "$projects.tasks.updatedAt",
                 status: "$projects.tasks.status",
