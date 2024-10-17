@@ -111,12 +111,13 @@ const UserController = {
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<void> => {
     try {
       const refreshToken = req.cookies.refreshToken;
 
       if (!refreshToken) {
-        return res.status(401).json({ message: "리프레시 토큰이 필요합니다." });
+        res.status(401).json({ message: "리프레시 토큰이 필요합니다." });
+        return;
       }
 
       const decoded = verifyToken(refreshToken);
@@ -124,6 +125,7 @@ const UserController = {
 
       const newAccessToken = generateToken(userId);
       res.status(200).send({ accessToken: newAccessToken });
+      return;
     } catch (err) {
       next(err);
     }

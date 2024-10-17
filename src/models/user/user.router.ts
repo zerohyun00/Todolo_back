@@ -38,6 +38,13 @@ userRouter.put("/reset-pw", UserController.resetPassword);
 // 로그인
 userRouter.post("/login", userValidator.logIn, UserController.logIn);
 
+// 토큰 재발급
+userRouter.post(
+  "/refresh-token",
+  authMiddleware,
+  UserController.refreshAccessToken
+);
+
 // 로그아웃
 userRouter.post("/logout", authMiddleware, UserController.logout);
 
