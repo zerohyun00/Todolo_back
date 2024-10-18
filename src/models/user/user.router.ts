@@ -24,9 +24,12 @@ userRouter.post(
 );
 
 // 팀 확인
-userRouter.post("/confirm-team", (req, res, next) => {
-  UserController.confirmTeam(req, res, next);
-});
+// userRouter.post("/confirm-team", (req, res, next) => {
+//   UserController.confirmTeam(req, res, next);
+// });
+
+// 팀 확인
+userRouter.post("/confirm-team", authMiddleware, UserController.confirmTeam);
 
 // 비밀번호 재설정 요청
 userRouter.post("/request-password-reset", UserController.requestPasswordReset);

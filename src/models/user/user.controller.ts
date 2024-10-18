@@ -1,10 +1,8 @@
 import express, { NextFunction, Request, Response } from "express";
 import UserService from "./user.service";
-import { generateToken, verifyToken } from "../../utils/jwt";
-import { User } from "./user.schema";
-import jwt from "jsonwebtoken";
 import { AppError } from "../../middleware/error.handler.middleware";
 import path from "path";
+import { generateToken, verifyToken } from "../../utils/jwt";
 
 const UserController = {
   register: async (
@@ -31,7 +29,6 @@ const UserController = {
     }
   },
 
-  // 회원가입 시 인비테이션 토큰 발급 소속팀 회원가입 페이지 보면서 해야할 듯
   sendTeamConfirmationEmail: async (
     req: Request,
     res: Response,
@@ -48,7 +45,7 @@ const UserController = {
         );
       }
 
-      const user = await User.findById(userId);
+      const user = await UserService.findById(userId);
       if (!user) {
         throw new AppError("Not Found", 404, "사용자를 찾을 수 없습니다.");
       }
@@ -72,13 +69,12 @@ const UserController = {
       next(err);
     }
   },
+
   confirmTeam: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { token } = req.body;
-      const { team } = req.body;
+      const { token, team } = req.body;
 
       const updatedUser = await UserService.confirmTeam(token, team);
-
       res
         .status(200)
         .send({ message: "팀 소속 업데이트 성공", data: updatedUser });
@@ -86,6 +82,7 @@ const UserController = {
       next(err);
     }
   },
+
   logIn: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body;
@@ -110,12 +107,13 @@ const UserController = {
           team: team,
         },
         accessToken,
-        refreshToken,
+        // refreshToken,
       });
     } catch (err) {
       next(err);
     }
   },
+
   refreshAccessToken: async (
     req: Request,
     res: Response,
@@ -134,11 +132,11 @@ const UserController = {
 
       const newAccessToken = generateToken(userId);
       res.status(200).send({ accessToken: newAccessToken });
-      return;
     } catch (err) {
       next(err);
     }
   },
+
   logout: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const refreshToken = req.cookies.refreshToken;
@@ -166,7 +164,6 @@ const UserController = {
       const { email } = req.body;
 
       await UserService.requestPasswordReset(email);
-
       res
         .status(200)
         .send({ message: "비밀번호 재설정 이메일이 전송되었습니다." });
@@ -180,7 +177,6 @@ const UserController = {
       const { token, newPassword } = req.body;
 
       await UserService.resetPassword(token, newPassword);
-
       res
         .status(200)
         .send({ message: "비밀번호가 성공적으로 변경되었습니다." });
@@ -203,7 +199,6 @@ const UserController = {
       }
 
       await UserService.updateUserInformation(userId, updateData);
-
       res.status(200).send({ message: "유저 정보 수정 성공" });
     } catch (err) {
       next(err);
@@ -247,15 +242,7 @@ const UserController = {
 
   getUserByToken: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const accessToken = req.headers.authorization?.split(" ")[1];
-
-      if (!accessToken) {
-        throw new AppError("Unauthorized", 401, "엑세스 토큰이 필요합니다.");
-      }
-
-      const decoded = verifyToken(accessToken);
-      const userId = (decoded as any).userId;
-
+      const userId = res.locals.userId;
       const user = await UserService.findById(userId);
       if (!user) {
         throw new AppError("Not Found", 404, "사용자를 찾을 수 없습니다.");
@@ -275,4 +262,5 @@ const UserController = {
     }
   },
 };
+
 export default UserController;

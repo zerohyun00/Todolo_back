@@ -42,14 +42,13 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ["./src/models/**/*.ts"], // API 주석을 포함하는 경로
+  apis: ["./src/models/**/*.ts"],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// 정적 파일 제공 설정
 app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
 app.use("/api/users", userRouter);
 app.use("/api/images", imageRouter);
