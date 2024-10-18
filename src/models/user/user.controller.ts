@@ -103,6 +103,7 @@ const UserController = {
           team: team,
         },
         accessToken,
+        refreshToken,
       });
     } catch (err) {
       next(err);
