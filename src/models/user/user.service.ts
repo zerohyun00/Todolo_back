@@ -1,23 +1,21 @@
-import bcrypt from "bcrypt";
-import { IUserInputDTO } from "../../interface/IUser";
-import { User } from "./user.schema";
-import { generateRefreshToken, generateToken } from "../../utils/jwt";
-import { Team } from "../team/team.schema";
-import { Image } from "../image/image.schema";
-import jwt from "jsonwebtoken";
-import nodemailer from "nodemailer";
-import { AppError } from "../../middleware/error.handler.middleware";
+import bcrypt from 'bcrypt';
+import { IUserInputDTO } from '../../interface/IUser';
+import { User } from './user.schema';
+import { generateRefreshToken, generateToken } from '../../utils/jwt';
+import { Team } from '../team/team.schema';
+import { Image } from '../image/image.schema';
+import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
+import { AppError } from '../../middleware/error.handler.middleware';
 
 const SALT_ROUNDS = 10;
 
 const UserService = {
-  register: async (data: IUserInputDTO, filePath?: string) => {
+  register: async (data: IUserInputDTO, imageUrl?: string) => {
     const existingUser = await User.findOne({ email: data.email });
 
     if (existingUser) {
-      throw new AppError("Bad Request", 400, "이미 존재하는 이메일입니다.");
-      // 계속 500고유키 에러가 먼저 출력됨, 피드백 주신 것 처럼 몽구스 에러가 계층으로 올라오는 것 같음
-      // try, catch로 한번 더 잡아보는 거 체크해보기
+      throw new AppError('Bad Request', 400, '이미 존재하는 이메일입니다.');
     }
 
     const hashedPassword = await bcrypt.hash(data.password!, SALT_ROUNDS);
@@ -25,25 +23,22 @@ const UserService = {
     const user = new User({
       ...data,
       password: hashedPassword,
-      avatar: "N/A",
+      avatar: imageUrl || 'N/A', // 이미지가 없을 경우 'N/A'로 설정
     });
+
     const savedUser = await user.save();
 
-    if (filePath) {
+    if (imageUrl) {
       const image = new Image({
         user_id: savedUser._id,
-        imageUrl: filePath,
+        imageUrl: imageUrl,
       });
       await image.save();
-      savedUser.avatar = image.imageUrl;
     }
-    const token = jwt.sign(
-      { id: savedUser._id },
-      process.env.JWT_SECRET || "invitationToken",
-      {
-        expiresIn: "1h",
-      }
-    );
+
+    const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET || 'invitationToken', {
+      expiresIn: '1h',
+    });
     savedUser.invitationToken = token;
 
     await savedUser.save();
@@ -58,7 +53,7 @@ const UserService = {
     const link = `${process.env.CONFIRMATION_TEAM_LINK}/${token}`;
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: 'gmail',
       auth: {
         user: process.env.GOOGLE_EMAIL,
         pass: process.env.GOOGLE_EMAIL_PASSWORD,
@@ -68,7 +63,7 @@ const UserService = {
     const mailOptions = {
       from: process.env.GOOGLE_EMAIL,
       to: user.email,
-      subject: "팀 소속 확인",
+      subject: '팀 소속 확인',
       text: `팀 소속을 확인하려면 다음 링크를 클릭하세요: ${link}`,
     };
 
@@ -76,17 +71,13 @@ const UserService = {
   },
 
   confirmTeam: async (token: string, team: string) => {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "invitationToken"
-    ) as { id: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'invitationToken') as { id: string };
 
     const user = await User.findById(decoded.id);
 
-    if (!user)
-      throw new AppError("Not Found", 404, "사용자를 찾을 수 없습니다.");
+    if (!user) throw new AppError('Not Found', 404, '사용자를 찾을 수 없습니다.');
     if (user.invitationToken !== token) {
-      throw new AppError("Unauthorized", 401, "잘못된 토큰입니다.");
+      throw new AppError('Unauthorized', 401, '잘못된 토큰입니다.');
     }
 
     let existingTeam = await Team.findOne({ team: team });
@@ -114,20 +105,10 @@ const UserService = {
 
   logIn: async (email: string, password: string) => {
     const user = await User.findOne({ email });
-    if (!user)
-      throw new AppError(
-        "Unauthorized",
-        401,
-        "아이디 혹은 패스워드를 확인해주세요"
-      );
+    if (!user) throw new AppError('Unauthorized', 401, '아이디 혹은 패스워드를 확인해주세요');
 
     const checkPassword = await bcrypt.compare(password, user.password!);
-    if (!checkPassword)
-      throw new AppError(
-        "Unauthorized",
-        401,
-        "아이디 혹은 패스워드를 확인해주세요"
-      );
+    if (!checkPassword) throw new AppError('Unauthorized', 401, '아이디 혹은 패스워드를 확인해주세요');
 
     const accessToken = generateToken(user._id.toString());
     const refreshToken = generateRefreshToken(user._id.toString());
@@ -152,11 +133,11 @@ const UserService = {
   },
 
   resetPassword: async (token: string, newPassword: string) => {
-    const decoded = jwt.verify(token, "resetToken") as { id: string };
+    const decoded = jwt.verify(token, 'resetToken') as { id: string };
     const user = await User.findById(decoded.id);
 
     if (!user || user.resetToken !== token) {
-      throw new AppError("Unauthorized", 401, "토큰이 유효하지 않습니다.");
+      throw new AppError('Unauthorized', 401, '토큰이 유효하지 않습니다.');
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
@@ -169,22 +150,17 @@ const UserService = {
 
   requestPasswordReset: async (email: string) => {
     const user = await User.findOne({ email });
-    if (!user)
-      throw new AppError(
-        "Not Found",
-        404,
-        "해당 이메일을 사용하는 사용자가 없습니다."
-      );
+    if (!user) throw new AppError('Not Found', 404, '해당 이메일을 사용하는 사용자가 없습니다.');
 
-    const resetToken = jwt.sign({ id: user._id }, "resetToken", {
-      expiresIn: "1h",
+    const resetToken = jwt.sign({ id: user._id }, 'resetToken', {
+      expiresIn: '1h',
     });
     user.resetToken = resetToken;
     await user.save();
 
     const resetLink = `${process.env.RESET_PASSWORD_LINK}/${resetToken}`;
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: 'gmail',
       auth: {
         user: process.env.GOOGLE_EMAIL,
         pass: process.env.GOOGLE_EMAIL_PASSWORD,
@@ -194,7 +170,7 @@ const UserService = {
     const mailOptions = {
       from: process.env.GOOGLE_EMAIL,
       to: user.email,
-      subject: "비밀번호 재설정 요청",
+      subject: '비밀번호 재설정 요청',
       text: `비밀번호를 재설정하려면 다음 링크를 클릭하세요: ${resetLink}`,
     };
 
@@ -205,10 +181,7 @@ const UserService = {
     const updateFields: Record<string, any> = {};
 
     if (updateData.password) {
-      const hashedPassword = await bcrypt.hash(
-        updateData.password,
-        SALT_ROUNDS
-      );
+      const hashedPassword = await bcrypt.hash(updateData.password, SALT_ROUNDS);
 
       updateFields.password = hashedPassword;
     }
@@ -231,10 +204,7 @@ const UserService = {
     }
 
     // 유저 업데이트 실행
-    const result = await User.updateOne(
-      { _id: userId },
-      { $set: updateFields }
-    );
+    const result = await User.updateOne({ _id: userId }, { $set: updateFields });
 
     return result;
   },
@@ -245,25 +215,20 @@ const UserService = {
 
   // 팀에 속한 유저만 조회 가능
   // 1팀유저는 1팀 유저만 검색 가능
-  getUser: async (
-    searchInfo: string,
-    userId: string,
-    page: number,
-    limit: number
-  ) => {
+  getUser: async (searchInfo: string, userId: string, page: number, limit: number) => {
     const skip = (page - 1) * limit;
 
     const userTeam = await Team.findOne({ members: userId });
 
     if (!userTeam || !userTeam.members || userTeam.members.length === 0) {
-      throw new AppError("Not Found", 404, "해당 유저를 찾을 수 없습니다.");
+      throw new AppError('Not Found', 404, '해당 유저를 찾을 수 없습니다.');
     }
 
     const users = await User.aggregate([
       {
         $match: {
           _id: { $in: userTeam.members },
-          name: { $regex: searchInfo, $options: "i" },
+          name: { $regex: searchInfo, $options: 'i' },
         },
       },
       {
@@ -278,12 +243,12 @@ const UserService = {
     ]);
 
     if (users.length === 0) {
-      throw new AppError("Not Found", 404, "해당 유저를 찾을 수 없습니다.");
+      throw new AppError('Not Found', 404, '해당 유저를 찾을 수 없습니다.');
     }
 
     const totalUsers = await User.countDocuments({
       _id: { $in: userTeam.members },
-      name: { $regex: searchInfo, $options: "i" },
+      name: { $regex: searchInfo, $options: 'i' },
     });
 
     return {
@@ -300,42 +265,42 @@ const UserService = {
       { $match: { _id: User } },
       {
         $lookup: {
-          from: "projects",
-          localField: "_id",
-          foreignField: "user_id",
-          as: "createdProjects",
+          from: 'projects',
+          localField: '_id',
+          foreignField: 'user_id',
+          as: 'createdProjects',
         },
       },
       {
         $lookup: {
-          from: "projects",
-          localField: "_id",
-          foreignField: "team_id",
-          as: "teamProjects",
+          from: 'projects',
+          localField: '_id',
+          foreignField: 'team_id',
+          as: 'teamProjects',
         },
       },
       {
         $lookup: {
-          from: "teams",
-          localField: "team_id",
-          foreignField: "_id",
-          as: "teamInfo",
+          from: 'teams',
+          localField: 'team_id',
+          foreignField: '_id',
+          as: 'teamInfo',
         },
       },
       {
         $lookup: {
-          from: "tasks",
-          localField: "_id",
-          foreignField: "user_id",
-          as: "createdTasks",
+          from: 'tasks',
+          localField: '_id',
+          foreignField: 'user_id',
+          as: 'createdTasks',
         },
       },
       {
         $lookup: {
-          from: "tasks",
-          localField: "_id",
-          foreignField: "taskMember",
-          as: "assignedTasks",
+          from: 'tasks',
+          localField: '_id',
+          foreignField: 'taskMember',
+          as: 'assignedTasks',
         },
       },
       { $skip: skip },
@@ -343,7 +308,7 @@ const UserService = {
     ]);
 
     if (!users || users.length === 0) {
-      throw new AppError("Not Found", 404, "해당 유저를 찾을 수 없습니다.");
+      throw new AppError('Not Found', 404, '해당 유저를 찾을 수 없습니다.');
     }
 
     const totalUsers = await User.countDocuments();

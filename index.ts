@@ -50,7 +50,7 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // 정적 파일 제공 설정
-app.use('/api/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'src/uploads')));
 app.use('/api/users', userRouter);
 app.use('/api/images', imageRouter);
 app.use('/api/teams', teamRouter);

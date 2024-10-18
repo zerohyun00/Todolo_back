@@ -1,12 +1,12 @@
-import ImageService from "./image.service";
-import { Request, Response, NextFunction } from "express";
-import multer from "multer";
-import path from "path";
-import { User } from "../user/user.schema";
+import ImageService from './image.service';
+import { Request, Response, NextFunction } from 'express';
+import multer from 'multer';
+import path from 'path';
+import { User } from '../user/user.schema';
 
 const storage = multer.diskStorage({
   destination: (_req: Request, _file: Express.Multer.File, cb) => {
-    cb(null, path.join(__dirname, "../../uploads"));
+    cb(null, path.join(__dirname, '../../uploads'));
   },
   filename: (_req: Request, file: Express.Multer.File, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -24,7 +24,7 @@ const ImageController = {
     try {
       const filePath = req.file?.path;
       if (!filePath) {
-        throw new Error("Bad Request+이미지 파일이 필요합니다.");
+        throw new Error('Bad Request+이미지 파일이 필요합니다.');
       }
 
       const image = await ImageService.createImage({
@@ -32,10 +32,7 @@ const ImageController = {
         user_id: res.locals.user_id,
         imageUrl: filePath,
       });
-      await User.updateOne(
-        { _id: req.body.user_id },
-        { $set: { avatar: image.imageUrl } }
-      );
+      await User.updateOne({ _id: req.body.user_id }, { $set: { avatar: image.imageUrl } });
       res.status(201).send({ data: image });
     } catch (err) {
       next(err);
