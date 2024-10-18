@@ -61,6 +61,8 @@ userRouter.get("/search", authMiddleware, UserController.findUser);
 // 모든 유저 검색
 userRouter.get("/users", UserController.getAllUsers);
 
+userRouter.get("/me", authMiddleware, UserController.getUserByToken);
+
 export default userRouter;
 
 /**

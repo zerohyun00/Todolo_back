@@ -15,8 +15,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/aws-sdk": "^0.0.42",
     "@types/hapi__joi": "^17.1.14",
     "@types/multer": "^1.4.12",
+    "@types/multer-s3": "^3.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
