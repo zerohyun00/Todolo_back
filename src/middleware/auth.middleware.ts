@@ -1,42 +1,45 @@
 // import { Request, Response, NextFunction } from "express";
-// import { verifyToken } from "../src/utils/jwt";
+// import { verifyToken } from "../utils/jwt";
+
+// interface TokenPayload {
+//   userId: string;
+// }
+// interface AuthenticatedRequest extends Request {
+//   user?: { userId: string };
+// }
 
 // export const authMiddleware = (
-//   req: Request,
+//   req: AuthenticatedRequest,
 //   res: Response,
 //   next: NextFunction
-// ) => {
+// ): void => {
 //   const authHeader = req.headers.authorization;
 
 //   if (!authHeader) {
-//     return res.status(401).json({ message: "토큰이 필요합니다." });
+//     res.status(401).json({ message: "토큰이 필요합니다." });
+//     return;
 //   }
 
 //   const token = authHeader.split(" ")[1];
 
 //   try {
-//     const decoded = verifyToken(token);
-//     // as { userId: string };
+//     const decoded = verifyToken(token) as TokenPayload;
 
-//     if (typeof decoded === "object" && decoded.userId) {
-//       req.user = decoded;
+//     if (decoded.userId) {
+//       res.locals.userId = decoded.userId;
 //       next();
 //     } else {
-//       return res.status(401).json({ message: "유효하지 않은 토큰입니다." });
+//       res.status(401).json({ message: "유효하지 않은 토큰입니다." });
 //     }
 //   } catch (error) {
-//     return res.status(401).json({ message: "유효하지 않은 토큰입니다." });
+//     res.status(401).json({ message: "유효하지 않은 토큰입니다." });
 //   }
 // };
 
-/*
- 위 코드는 req를 글로벌로 확장했을 시 사용할 수 있는 코드
- 아래 코드는 res 제네릭
-
-*/
-
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/jwt";
+import { AppError } from "./error.handler.middleware";
+import jwt from "jsonwebtoken";
 
 interface TokenPayload {
   userId: string;
@@ -53,8 +56,7 @@ export const authMiddleware = (
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    res.status(401).json({ message: "토큰이 필요합니다." });
-    return;
+    throw new AppError("Unauthorized", 401, "토큰이 필요합니다.");
   }
 
   const token = authHeader.split(" ")[1];
@@ -62,13 +64,19 @@ export const authMiddleware = (
   try {
     const decoded = verifyToken(token) as TokenPayload;
 
-    if (decoded.userId) {
-      res.locals.userId = decoded.userId;
-      next();
-    } else {
-      res.status(401).json({ message: "유효하지 않은 토큰입니다." });
+    if (!decoded || !decoded.userId) {
+      throw new AppError("Unauthorized", 401, "유효하지 않은 토큰입니다.");
     }
+
+    res.locals.userId = decoded.userId;
+    next();
   } catch (error) {
-    res.status(401).json({ message: "유효하지 않은 토큰입니다." });
+    if (error instanceof jwt.TokenExpiredError) {
+      throw new AppError("Unauthorized", 401, "토큰이 만료되었습니다.");
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      throw new AppError("Unauthorized", 401, "잘못된 토큰 형식입니다.");
+    } else {
+      throw new AppError("Unauthorized", 401, "유효하지 않은 토큰입니다.");
+    }
   }
 };

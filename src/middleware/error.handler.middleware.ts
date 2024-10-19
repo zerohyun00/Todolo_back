@@ -1,5 +1,3 @@
-// 한인호 코치님 코드리뷰 추천
-
 import { ErrorRequestHandler } from "express";
 import Joi from "joi";
 

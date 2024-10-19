@@ -149,14 +149,6 @@ const TaskService = {
       );
     }
 
-    if (!isAuthorized) {
-      throw new AppError(
-        "Unauthorized",
-        401,
-        "해당 업무를 삭제할 권한이 없습니다."
-      );
-    }
-
     await Task.findByIdAndDelete(taskId);
     return { message: "업무가 성공적으로 삭제되었습니다." };
   },

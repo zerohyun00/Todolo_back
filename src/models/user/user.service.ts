@@ -75,10 +75,15 @@ const UserService = {
   },
 
   confirmTeam: async (token: string, team: string) => {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "invitationToken"
-    ) as { id: string };
+    let decoded;
+    try {
+      decoded = jwt.verify(
+        token,
+        process.env.JWT_SECRET || "invitationToken"
+      ) as { id: string };
+    } catch (error) {
+      throw new AppError("Unauthorized", 401, "유효하지 않은 토큰입니다.");
+    }
 
     const user = await User.findById(decoded.id);
 
@@ -151,10 +156,19 @@ const UserService = {
   },
 
   resetPassword: async (token: string, newPassword: string) => {
-    const decoded = jwt.verify(token, "resetToken") as { id: string };
-    const user = await User.findById(decoded.id);
+    let decoded;
+    try {
+      decoded = jwt.verify(token, "resetToken") as { id: string };
+    } catch (error) {
+      throw new AppError("Unauthorized", 401, "유효하지 않은 토큰입니다.");
+    }
 
-    if (!user || user.resetToken !== token) {
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      throw new AppError("Unauthorized", 401, "사용자를 찾을 수 없습니다.");
+    }
+
+    if (user.resetToken !== token) {
       throw new AppError("Unauthorized", 401, "토큰이 유효하지 않습니다.");
     }
 
@@ -208,7 +222,6 @@ const UserService = {
         updateData.password,
         SALT_ROUNDS
       );
-
       updateFields.password = hashedPassword;
     }
 
@@ -218,18 +231,16 @@ const UserService = {
       const existingImage = await Image.findOne({ user_id: userId });
       if (existingImage) {
         existingImage.imageUrl = updateData.avatar;
-        await existingImage.save(); // 이미지 URL 업데이트
+        await existingImage.save();
       } else {
-        // 이미지가 없는 경우 새로 생성
         const newImage = new Image({
           user_id: userId,
           imageUrl: updateData.avatar,
         });
-        await newImage.save(); // 새로운 이미지 저장
+        await newImage.save();
       }
     }
 
-    // 유저 업데이트 실행
     const result = await User.updateOne(
       { _id: userId },
       { $set: updateFields }
