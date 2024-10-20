@@ -214,44 +214,87 @@ const UserService = {
     await transporter.sendMail(mailOptions);
   },
 
-  updateUserInformation: async (userId: string, updateData: IUserInputDTO) => {
-    const updateFields: Record<string, any> = {};
+  // updateUserInformation: async (userId: string, updateData: IUserInputDTO) => {
+  //   const updateFields: Record<string, any> = {};
 
-    if (updateData.password) {
-      const hashedPassword = await bcrypt.hash(
-        updateData.password,
-        SALT_ROUNDS
-      );
-      updateFields.password = hashedPassword;
+  //   if (updateData.password) {
+  //     const hashedPassword = await bcrypt.hash(
+  //       updateData.password,
+  //       SALT_ROUNDS
+  //     );
+  //     updateFields.password = hashedPassword;
+  //   }
+
+  //   if (updateData.avatar) {
+  //     updateFields.avatar = updateData.avatar;
+
+  //     const existingImage = await Image.findOne({ user_id: userId });
+  //     if (existingImage) {
+  //       existingImage.imageUrl = updateData.avatar;
+  //       await existingImage.save();
+  //     } else {
+  //       const newImage = new Image({
+  //         user_id: userId,
+  //         imageUrl: updateData.avatar,
+  //       });
+  //       await newImage.save();
+  //     }
+  //   }
+
+  //   const result = await User.updateOne(
+  //     { _id: userId },
+  //     { $set: updateFields }
+  //   );
+
+  //   return result;
+  // },
+
+  updateUserAvatar: async (
+    userId: string,
+    avatarPath: string
+  ): Promise<void> => {
+    const existingImage = await Image.findOne({ user_id: userId });
+
+    if (existingImage) {
+      existingImage.imageUrl = avatarPath;
+      await existingImage.save();
+    } else {
+      const newImage = new Image({
+        user_id: userId,
+        imageUrl: avatarPath,
+      });
+      await newImage.save();
     }
 
-    if (updateData.avatar) {
-      updateFields.avatar = updateData.avatar;
-
-      const existingImage = await Image.findOne({ user_id: userId });
-      if (existingImage) {
-        existingImage.imageUrl = updateData.avatar;
-        await existingImage.save();
-      } else {
-        const newImage = new Image({
-          user_id: userId,
-          imageUrl: updateData.avatar,
-        });
-        await newImage.save();
-      }
-    }
-
-    const result = await User.updateOne(
-      { _id: userId },
-      { $set: updateFields }
-    );
-
-    return result;
+    await User.updateOne({ _id: userId }, { $set: { avatar: avatarPath } });
   },
 
-  /*
-  유저조회 다시 생각해보기
-  */
+  updateUserPassword: async (
+    userId: string,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<{ status: string; message: string }> => {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new AppError("Not Found", 404, "사용자를 찾을 수 없습니다.");
+    }
+
+    const isPasswordMatch = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+    if (!isPasswordMatch) {
+      return { status: "error", message: "not match" };
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    user.password = hashedPassword;
+
+    await user.save();
+
+    return { status: "success", message: "password updated" };
+  },
 
   // 팀에 속한 유저만 조회 가능
   // 1팀유저는 1팀 유저만 검색 가능

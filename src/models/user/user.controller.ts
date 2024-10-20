@@ -185,21 +185,77 @@ const UserController = {
     }
   },
 
-  updateUserInformation: async (
+  // updateUserInformation: async (
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ) => {
+  //   try {
+  //     const { userId } = req.params;
+  //     const updateData = req.body;
+
+  //     if (req.file) {
+  //       updateData.avatar = req.file.path;
+  //     }
+
+  //     await UserService.updateUserInformation(userId, updateData);
+  //     res.status(200).send({ message: "유저 정보 수정 성공" });
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // },
+
+  updateUserAvatar: async (
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<void> => {
     try {
-      const { userId } = req.params;
-      const updateData = req.body;
+      const userId = res.locals.userId;
 
-      if (req.file) {
-        updateData.avatar = req.file.path;
+      if (!req.file) {
+        res.status(400).send({ message: "프로필 이미지가 필요합니다." });
+        return;
       }
 
-      await UserService.updateUserInformation(userId, updateData);
-      res.status(200).send({ message: "유저 정보 수정 성공" });
+      const avatarPath = req.file.path;
+      await UserService.updateUserAvatar(userId, avatarPath);
+
+      res
+        .status(200)
+        .send({ message: "프로필 이미지가 성공적으로 수정되었습니다." });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  updateUserPassword: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const userId = res.locals.userId;
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        res
+          .status(400)
+          .send({ message: "현재 비밀번호와 새로운 비밀번호가 필요합니다." });
+        return;
+      }
+
+      const result = await UserService.updateUserPassword(
+        userId,
+        currentPassword,
+        newPassword
+      );
+
+      if (result.status === "error") {
+        res.status(401).send({ message: result.message });
+      } else {
+        res.status(200).send({ message: result.message });
+      }
     } catch (err) {
       next(err);
     }

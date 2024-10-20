@@ -46,11 +46,26 @@ userRouter.post(
 userRouter.post("/logout", authMiddleware, UserController.logout);
 
 // 유저 정보 업데이트 (비밀번호, 아바타 업데이트)
+// userRouter.put(
+//   "/update/:userId",
+//   upload.single("avatar"),
+//   authMiddleware,
+//   UserController.updateUserInformation
+// );
+
+// 비밀번호 업데이트
 userRouter.put(
-  "/update/:userId",
-  upload.single("avatar"),
+  "/update-password",
   authMiddleware,
-  UserController.updateUserInformation
+  UserController.updateUserPassword
+);
+
+// 프로필 이미지 업데이트
+userRouter.put(
+  "/update-profileImg",
+  authMiddleware,
+  upload.single("avatar"),
+  UserController.updateUserAvatar
 );
 
 // 특정 유저 검색  이름으로 검색 (소속 팀 기준)
@@ -512,21 +527,84 @@ export default userRouter;
  *                   example: "Internal Server Error"
  */
 
-// 유저 정보 업데이트
+// 비밀번호 변경
 /**
  * @swagger
- * /users/update/{userId}:
+ * /users/update-password:
  *   put:
- *     summary: 유저 정보 업데이트
- *     description: 유저의 비밀번호 또는 프로필 이미지를 업데이트합니다. (form-data 형식 사용)
+ *     summary: 비밀번호 업데이트
+ *     description: 현재 비밀번호와 새 비밀번호를 입력하여 비밀번호를 업데이트합니다.
  *     tags: [Users]
- *     parameters:
- *       - in: path
- *         name: userId
- *         schema:
- *           type: string
- *         required: true
- *         description: 유저 ID
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: 현재 비밀번호
+ *                 example: "current_password_123"
+ *               newPassword:
+ *                 type: string
+ *                 description: 새 비밀번호
+ *                 example: "new_password_456"
+ *     responses:
+ *       200:
+ *         description: 비밀번호가 성공적으로 변경되었습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "비밀번호가 성공적으로 변경되었습니다."
+ *       400:
+ *         description: 현재 비밀번호와 새로운 비밀번호가 필요합니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "현재 비밀번호와 새로운 비밀번호가 필요합니다."
+ *       401:
+ *         description: 현재 비밀번호가 일치하지 않음.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "not match"
+ *       500:
+ *         description: 서버 오류.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ */
+
+// 이미지 업데이트
+/**
+ * @swagger
+ * /users/update-profileImg:
+ *   put:
+ *     summary: 프로필 이미지 업데이트
+ *     description: 사용자의 프로필 이미지를 업로드하여 업데이트합니다.
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -534,16 +612,13 @@ export default userRouter;
  *           schema:
  *             type: object
  *             properties:
- *               password:
- *                 type: string
- *                 description: 새로운 비밀번호 (선택적)
  *               avatar:
  *                 type: string
  *                 format: binary
- *                 description: 프로필 이미지 (선택적)
+ *                 description: 업로드할 프로필 이미지
  *     responses:
  *       200:
- *         description: 유저 정보 수정 성공
+ *         description: 프로필 이미지가 성공적으로 수정되었습니다.
  *         content:
  *           application/json:
  *             schema:
@@ -551,9 +626,9 @@ export default userRouter;
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "유저 정보 수정 성공"
+ *                   example: "프로필 이미지가 성공적으로 수정되었습니다."
  *       400:
- *         description: 잘못된 요청
+ *         description: 프로필 이미지가 필요합니다.
  *         content:
  *           application/json:
  *             schema:
@@ -561,29 +636,9 @@ export default userRouter;
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Bad Request+필수 필드가 누락되었습니다."
- *       401:
- *         description: 인증 오류
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Unauthorized+유저 정보 수정 권한이 없습니다."
- *       404:
- *         description: 유저 미존재
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Not Found+유저를 찾을 수 없습니다."
+ *                   example: "프로필 이미지가 필요합니다."
  *       500:
- *         description: 서버 오류
+ *         description: 서버 오류.
  *         content:
  *           application/json:
  *             schema:
