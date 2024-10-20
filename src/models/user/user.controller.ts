@@ -107,7 +107,6 @@ const UserController = {
           team: team,
         },
         accessToken,
-        // refreshToken,
       });
     } catch (err) {
       next(err);
@@ -184,26 +183,6 @@ const UserController = {
       next(err);
     }
   },
-
-  // updateUserInformation: async (
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ) => {
-  //   try {
-  //     const { userId } = req.params;
-  //     const updateData = req.body;
-
-  //     if (req.file) {
-  //       updateData.avatar = req.file.path;
-  //     }
-
-  //     await UserService.updateUserInformation(userId, updateData);
-  //     res.status(200).send({ message: "유저 정보 수정 성공" });
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // },
 
   updateUserAvatar: async (
     req: Request,

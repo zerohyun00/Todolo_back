@@ -45,14 +45,6 @@ userRouter.post(
 // 로그아웃
 userRouter.post("/logout", authMiddleware, UserController.logout);
 
-// 유저 정보 업데이트 (비밀번호, 아바타 업데이트)
-// userRouter.put(
-//   "/update/:userId",
-//   upload.single("avatar"),
-//   authMiddleware,
-//   UserController.updateUserInformation
-// );
-
 // 비밀번호 업데이트
 userRouter.put(
   "/update-password",

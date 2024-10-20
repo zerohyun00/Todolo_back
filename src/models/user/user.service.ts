@@ -40,7 +40,7 @@ const UserService = {
       { id: savedUser._id },
       process.env.JWT_SECRET || "invitationToken",
       {
-        expiresIn: "1h",
+        expiresIn: "7d",
       }
     );
     savedUser.invitationToken = token;
@@ -213,41 +213,6 @@ const UserService = {
 
     await transporter.sendMail(mailOptions);
   },
-
-  // updateUserInformation: async (userId: string, updateData: IUserInputDTO) => {
-  //   const updateFields: Record<string, any> = {};
-
-  //   if (updateData.password) {
-  //     const hashedPassword = await bcrypt.hash(
-  //       updateData.password,
-  //       SALT_ROUNDS
-  //     );
-  //     updateFields.password = hashedPassword;
-  //   }
-
-  //   if (updateData.avatar) {
-  //     updateFields.avatar = updateData.avatar;
-
-  //     const existingImage = await Image.findOne({ user_id: userId });
-  //     if (existingImage) {
-  //       existingImage.imageUrl = updateData.avatar;
-  //       await existingImage.save();
-  //     } else {
-  //       const newImage = new Image({
-  //         user_id: userId,
-  //         imageUrl: updateData.avatar,
-  //       });
-  //       await newImage.save();
-  //     }
-  //   }
-
-  //   const result = await User.updateOne(
-  //     { _id: userId },
-  //     { $set: updateFields }
-  //   );
-
-  //   return result;
-  // },
 
   updateUserAvatar: async (
     userId: string,
