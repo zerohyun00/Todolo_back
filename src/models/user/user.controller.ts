@@ -216,20 +216,12 @@ const UserController = {
   getUserByToken: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userId = res.locals.userId;
-      const user = await UserService.findById(userId);
-      if (!user) {
-        throw new AppError('Not Found', 404, '사용자를 찾을 수 없습니다.');
-      }
+
+      const user = await UserService.getUserByIdWithTeam(userId);
 
       res.status(200).send({
         message: '유저 정보 조회 성공',
-        data: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          avatar: user.avatar,
-          team: user.team_id,
-        },
+        data: user,
       });
     } catch (err) {
       next(err);
