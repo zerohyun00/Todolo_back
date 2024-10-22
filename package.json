@@ -1,0 +1,50 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "dev": "nodemon --watch ./ --ext ts --exec \"ts-node\" ./index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://kdt-gitlab.elice.io/react-node-track/class01/web-project1/team02/back.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/aws-sdk": "^0.0.42",
+    "@types/hapi__joi": "^17.1.14",
+    "@types/multer": "^1.4.12",
+    "@types/multer-s3": "^3.0.3",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.15",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/joi": "^17.2.3",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/mongoose": "^5.11.97",
+    "@types/nodemailer": "^6.4.16",
+    "@types/swagger-ui-express": "^4.1.6",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  }
+}
