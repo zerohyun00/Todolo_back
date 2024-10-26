@@ -129,7 +129,6 @@ const UserService = {
 
       accessToken,
       refreshToken,
-      // team: teamData ? teamData.team : null,
       team: teamData,
     };
   },
@@ -370,7 +369,7 @@ const UserService = {
           name: 1,
           email: 1,
           avatar: 1,
-          team: { $ifNull: ['$teamInfo.team', 'N/A'] }, // teamInfo가 없으면 'N/A' 반환
+          team: { $ifNull: ['$teamInfo.team', 'N/A'] },
         },
       },
     ]);
@@ -379,7 +378,7 @@ const UserService = {
       throw new AppError('Not Found', 404, '사용자를 찾을 수 없습니다.');
     }
 
-    return user[0]; // 배열의 첫 번째 요소 반환
+    return user[0];
   },
 };
 

@@ -1,21 +1,11 @@
-// import { Router } from "express";
-// import { authMiddleware } from "../../../middleware/auth.middleware";
-// import TeamController from "./team.controller";
+import { Router } from 'express';
 
-// const teamRouter = Router();
-
-// teamRouter.get("/:id", authMiddleware, TeamController);
-
-// export default teamRouter;
-
-import { Router } from "express";
-
-import TeamController from "./team.controller";
-import { authMiddleware } from "../../middleware/auth.middleware";
+import TeamController from './team.controller';
+import { authMiddleware } from '../../middleware/auth.middleware';
 
 const teamRouter = Router();
 
-teamRouter.get("/:id", authMiddleware, TeamController);
+teamRouter.get('/:id', authMiddleware, TeamController);
 
 /**
  * @swagger

@@ -1,72 +1,50 @@
-import { Router } from "express";
-import UserController from "./user.controller";
-import { upload } from "../image/image.controller"; // Multer 설정
+import { Router } from 'express';
+import UserController from './user.controller';
+import { upload } from '../image/image.controller';
 
-import { authMiddleware } from "../../middleware/auth.middleware";
-import { userValidator } from "../../middleware/validators/user.validator";
+import { authMiddleware } from '../../middleware/auth.middleware';
+import { userValidator } from '../../middleware/validators/user.validator';
 
 const userRouter = Router();
 
 //가입
 
-userRouter.post(
-  "/register",
-  upload.single("avatar"),
-  userValidator.signUp,
-  UserController.register
-);
+userRouter.post('/register', upload.single('avatar'), userValidator.signUp, UserController.register);
 
 // 팀 확인 이메일 요청
-userRouter.post(
-  "/send-confirmation-email",
-  authMiddleware,
-  UserController.sendTeamConfirmationEmail
-);
+userRouter.post('/send-confirmation-email', authMiddleware, UserController.sendTeamConfirmationEmail);
 
 // 팀 확인
-userRouter.post("/confirm-team", authMiddleware, UserController.confirmTeam);
+userRouter.post('/confirm-team', authMiddleware, UserController.confirmTeam);
 
 // 비밀번호 재설정 요청
-userRouter.post("/request-password-reset", UserController.requestPasswordReset);
+userRouter.post('/request-password-reset', UserController.requestPasswordReset);
 
 // 비밀번호 재설정
-userRouter.put("/reset-pw", UserController.resetPassword);
+userRouter.put('/reset-pw', UserController.resetPassword);
 
 // 로그인
-userRouter.post("/login", userValidator.logIn, UserController.logIn);
+userRouter.post('/login', userValidator.logIn, UserController.logIn);
 
 // 토큰 재발급
-userRouter.post(
-  "/refresh-token",
-  authMiddleware,
-  UserController.refreshAccessToken
-);
+userRouter.post('/refresh-token', authMiddleware, UserController.refreshAccessToken);
 
 // 로그아웃
-userRouter.post("/logout", authMiddleware, UserController.logout);
+userRouter.post('/logout', authMiddleware, UserController.logout);
 
 // 비밀번호 업데이트
-userRouter.put(
-  "/update-password",
-  authMiddleware,
-  UserController.updateUserPassword
-);
+userRouter.put('/update-password', authMiddleware, UserController.updateUserPassword);
 
 // 프로필 이미지 업데이트
-userRouter.put(
-  "/update-profileImg",
-  authMiddleware,
-  upload.single("avatar"),
-  UserController.updateUserAvatar
-);
+userRouter.put('/update-profileImg', authMiddleware, upload.single('avatar'), UserController.updateUserAvatar);
 
 // 특정 유저 검색  이름으로 검색 (소속 팀 기준)
-userRouter.get("/search", authMiddleware, UserController.findUser);
+userRouter.get('/search', authMiddleware, UserController.findUser);
 
 // 모든 유저 검색
-userRouter.get("/users", UserController.getAllUsers);
+userRouter.get('/users', UserController.getAllUsers);
 
-userRouter.get("/me", authMiddleware, UserController.getUserByToken);
+userRouter.get('/me', authMiddleware, UserController.getUserByToken);
 
 export default userRouter;
 
