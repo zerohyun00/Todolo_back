@@ -1,5 +1,5 @@
 <a href="http://kdt-react-node-1-team02.elicecoding.com/" target="_blank">
-<img src="README.asset\todolo_logo_main.png" alt="배너" width="100%"/>
+<img src="README.asset/todolo_logo_main.png" alt="배너" width="100%"/>
 </a>
 
 <br/>
@@ -26,11 +26,11 @@ $ npm start
 
 # 2. Team Members (팀원 및 팀 소개)
 
-|                            이주영                            |                            조아라                            |                            이서빈                            |                            김영현                            |                            손석경                            |
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| <img src="README.asset\이주영.png" alt="이주영" width="150"> | <img src="README.asset\조아라.png" alt="조아라" width="150"> | <img src="README.asset\이서빈.png" alt="이서빈" width="150"> | <img src="README.asset\김영현.png" alt="김영현" width="150"> | <img src="README.asset\손석경.png" alt="손석경" width="150"> |
-|                              FE                              |                              FE                              |                              FE                              |                              BE                              |                              BE                              |
-|            [GitHub](https://github.com/jjyy0804)             |        [GitHub](https://kdt-gitlab.elice.io/aj02468)         |        [GitHub](https://kdt-gitlab.elice.io/rylie916)        |           [GitHub](https://github.com/zerohyun00)            |             [GitHub](https://github.com/SonSETO)             |
+|                               이주영                               |                            조아라                            |                              이서빈                              |                               김영현                                |                               손석경                                |
+| :----------------------------------------------------------------: | :----------------------------------------------------------: | :--------------------------------------------------------------: | :-----------------------------------------------------------------: | :-----------------------------------------------------------------: |
+| <img src="README.asset/lee_jooyoung.png" alt="이주영" width="150"> | <img src="README.asset/jo_ara.png" alt="조아라" width="150"> | <img src="README.asset/lee_seobin.png" alt="이서빈" width="150"> | <img src="README.asset/kim_younghyun.png" alt="김영현" width="150"> | <img src="README.asset/son_seokkyung.png" alt="손석경" width="150"> |
+|                                 FE                                 |                              FE                              |                                FE                                |                                 BE                                  |                                 BE                                  |
+|               [GitHub](https://github.com/jjyy0804)                |        [GitHub](https://kdt-gitlab.elice.io/aj02468)         |          [GitHub](https://kdt-gitlab.elice.io/rylie916)          |               [GitHub](https://github.com/zerohyun00)               |                [GitHub](https://github.com/SonSETO)                 |
 
 <br/>
 <br/>
@@ -88,25 +88,25 @@ $ npm start
 
 # 4. 화면 구성 📺
 
-|                      로그인 페이지                      |                      회원가입 페이지                      |                        메인 페이지                        |
-| :-----------------------------------------------------: | :-------------------------------------------------------: | :-------------------------------------------------------: |
-|    <img width="200px" src="README.asset\로그인.png">    |    <img width="100px" src="README.asset\회원가입.png">    |      <img width="300px" src="README.asset\메인.png">      |
-|                     팀 설정 페이지                      |                       캘린더 페이지                       |                     캘린더 상세 모달                      |
-|    <img width="200px" src="README.asset\팀설정.png">    |     <img width="300px" src="README.asset\캘린더.png">     | <img width="200px" src="README.asset\캘린더상세모달.png"> |
-|                     일정 추가 모달                      |                      비밀번호 재설정                      |                       내 정보 모달                        |
-| <img width="300px" src="README.asset\일정추가모달.png"> | <img width="200px" src="README.asset\비밀번호재설정.png"> |   <img width="200px" src="README.asset\내정보모달.png">   |
+|                         로그인 페이지                         |                      회원가입 페이지                      |                           메인 페이지                            |
+| :-----------------------------------------------------------: | :-------------------------------------------------------: | :--------------------------------------------------------------: |
+|       <img width="200px" src="README.asset/login.png">        |     <img width="100px" src="README.asset/signup.png">     |         <img width="300px" src="README.asset/main.png">          |
+|                        팀 설정 페이지                         |                       캘린더 페이지                       |                         캘린더 상세 모달                         |
+|    <img width="200px" src="README.asset/team_setting.png">    |    <img width="300px" src="README.asset/calendar.png">    | <img width="200px" src="README.asset/calendar_detail_modal.png"> |
+|                        일정 추가 모달                         |                      비밀번호 재설정                      |                           내 정보 모달                           |
+| <img width="300px" src="README.asset/add_schedule_modal.png"> | <img width="200px" src="README.asset/password_reset.png"> |     <img width="200px" src="README.asset/profile_modal.png">     |
 
 ---
 
 # 4. Tasks & Responsibilities (작업 및 역할 분담)
 
-|        |                                                              |                                                                                                                      |
-| ------ | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| 이주영 | <img src="README.asset\이주영.png" alt="이주영" width="100"> | <ul><li>일정 등록, 수정, 삭제</li><li>팀 리딩 및 커뮤니케이션</li><li>일정/유저 상태관리</li></ul>                   |
-| 조아라 | <img src="README.asset\조아라.png" alt="조아라" width="100"> | <ul><li>로그인상태유지(프록시설정)</li><li>캘린더/ 랜딩 / 유저정보수정</li><li>비밀번호 재설정요청/ 재설정</li></ul> |
-| 이서빈 | <img src="README.asset\이서빈.png" alt="이서빈" width="100"> | <ul><li>캘린더 모달, 댓글</li><li>유저정보 모달(소속 팀)</li><li>팀 정하기</li></ul>                                 |
-| 김영현 | <img src="README.asset\김영현.png" alt="김영현" width="100"> | <ul><li>팀</li><li>프로젝트</li><li>업무</li></ul>                                                                   |
-| 손석경 | <img src="README.asset\손석경.png" alt="손석경" width="100"> | <ul><li>유저</li><li>인증</li><li>업무</li></ul>                                                                     |
+|        |                                                                     |                                                                                                                      |
+| ------ | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 이주영 | <img src="README.asset/lee_jooyoung.png" alt="이주영" width="100">  | <ul><li>일정 등록, 수정, 삭제</li><li>팀 리딩 및 커뮤니케이션</li><li>일정/유저 상태관리</li></ul>                   |
+| 조아라 | <img src="README.asset/jo_ara.png" alt="조아라" width="100">        | <ul><li>로그인상태유지(프록시설정)</li><li>캘린더/ 랜딩 / 유저정보수정</li><li>비밀번호 재설정요청/ 재설정</li></ul> |
+| 이서빈 | <img src="README.asset/lee_seobin.png" alt="이서빈" width="100">    | <ul><li>캘린더 모달, 댓글</li><li>유저정보 모달(소속 팀)</li><li>팀 정하기</li></ul>                                 |
+| 김영현 | <img src="README.asset/kim_younghyun.png" alt="김영현" width="100"> | <ul><li>팀</li><li>프로젝트</li><li>업무</li></ul>                                                                   |
+| 손석경 | <img src="README.asset/son_seokkyung.png" alt="손석경" width="100"> | <ul><li>유저</li><li>인증</li><li>업무</li></ul>                                                                     |
 
 <br/>
 <br/>
