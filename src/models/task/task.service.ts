@@ -100,7 +100,7 @@ const TaskService = {
         taskMember: updateData.taskMember,
       },
       { new: true },
-    );
+    ).lean();
 
     return updatedTask;
   },
