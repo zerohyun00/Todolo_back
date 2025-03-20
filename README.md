@@ -5,12 +5,6 @@
 <br/>
 <br/>
 
-# 0. Getting Started (시작하기)
-
-```bash
-$ npm start
-```
-
 ## 🛠 시연 영상
 
 [시연 영상 ](https://youtu.be/KedHE3VGAEc)
