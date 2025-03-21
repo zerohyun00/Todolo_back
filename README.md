@@ -125,11 +125,12 @@
 
 # 7. 주요 작업
 
-- 팀 , 프로젝트, 업무, 사용자 등의 도메인에 관한 ERD를 설계하고, **CRUD API를 개발**했습니다.
 - **Layered Architecture**를 도입하여 책임과 관심사를 분리함으로써 코드의 확장성과 유연성을 개선했습니다.
-- 회원가입 및 로그인 시 유효성 검증을 위해 **Joi**를 활용하여 입력값 조건(이메일 형식, 비밀번호 강도 등)을 검증하고, 서버의 데이터 무결성을 강화했습니다.
+- 회원가입 및 로그인 시 **유효성 검증**을 위해 **Joi**를 활용하여 **validator**를 만들어서 입력값 조건(이메일 형식, 비밀번호 강도 등)을 검증하고, 서버의 데이터 무결성을 강화했습니다.
 - **AppError** 클래스를 통해 커스텀 에러를 정의하고, 에러 핸들러를 구현하여 운영 에러와 서버 에러를 구분 처리하였습니다. 또, 모든 API 요청에 대해 일관된 에러 처리 방식을 적용하여 확장성과 유지보수성을 강화했습니다.
-- 다중 조인과 데이터 가공 작업에서 반복적인 쿼리 호출로 인한 성능 저하 문제를 해결하기 위해, **MongoDB aggregate**를 사용해 데이터를 한 번의 쿼리로 처리하여 API 호출을 효율적으로 처리했습니다.
+- 업무와 프로젝트에 조인이 필요할 때 MongoDB **aggregate**를 사용해 데이터를 한 번의 쿼리로 처리하여  불필요한 DB I/O 오버헤드를 줄여서  API 호출을 더 효율적으로 처리했습니다.
+- 팀 소속 인증 시 링크가 해당 유저에게 메일로 보내지게 되는데 인증 과정 없이 즉시 팀이 결정되는 취약점을 발견해서 토큰 검증을 통해 링크의 유효성을 확인하고 팀에 소속되는 로직을 도입하여 **안전성**을 강화했습니다.  
+- **팀 , 프로젝트, 업무, 사용자** 등의 도메인에 관한 ERD를 설계하고,  **CRUD API를 개발**했습니다.
 
 # 8. Technology Stack (기술 스택)
 
@@ -153,92 +154,3 @@
 | **MongoDB**    | 확장성 있고 유연한 데이터 저장을 위한 NoSQL 데이터베이스입니다.         | ![MongoDB Badge](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)          |
 | **TypeScript** | JavaScript에 정적 타입을 추가하여 코드의 안정성을 높이는 언어입니다.    | ![TypeScript Badge](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) |
 
-<br/>
-
-## 8.3 Cooperation
-
-| 도구    | 로고                                                                                                         |
-| ------- | ------------------------------------------------------------------------------------------------------------ |
-| Git     | <img src="https://git-scm.com/images/logos/downloads/Git-Icon-1788C.png" alt="Git" width="100">              |
-| GitLab  | <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/GitLab_logo.svg" alt="GitLab" width="100">     |
-| Notion  | <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion" width="100"> |
-| Discord | <img src="https://upload.wikimedia.org/wikipedia/en/9/98/Discord_logo.svg" alt="Discord" width="100">        |
-
-<br/>
-
-# 9. Project Structure (프로젝트 구조, 백엔드)
-
-```plaintext
-BACK/
-├── db/                    # 데이터베이스 설정 파일
-├── node_modules/          # 설치된 npm 모듈
-├── README.asset           # README에 사용된 에셋 파일
-├── src/
-│   ├── interface/         # 타입 및 인터페이스 정의 파일
-│   ├── middleware/        # 미들웨어 모듈
-│   ├── models/            # 데이터베이스 모델 파일
-│   ├── uploads/           # 파일 업로드 폴더
-│   └── utils/             # 유틸리티 함수 모음
-├── .gitignore             # Git에서 무시할 파일 및 폴더 목록
-├── index.ts               # 애플리케이션 진입 파일
-├── package-lock.json      # 정확한 종속성 버전 기록 파일
-├── package.json           # 프로젝트 종속성 및 스크립트 정의
-├── README.md              # 프로젝트 개요 및 사용법
-└── tsconfig.json          # TypeScript 설정 파일
-```
-
-<br/>
-<br/>
-
-# 10. Coding Convention
-
-## 문장 종료
-
-```
-// 세미콜론(;)
-console.log("Hello World!");
-```
-
-<br/>
-
-## 명명 규칙
-
-- 변수 & 함수 : 카멜케이스
-
-<br/>
-
-# 11. 커밋 컨벤션
-
-## 기본 구조
-
-```
-type : subject
-```
-
-<br/>
-
-## type 종류
-
-```
-feat : 새로운 기능 추가
-fix : 버그 수정
-docs : 문서 수정
-style : 코드 포맷팅, 세미콜론 누락, 코드 변경이 없는 경우
-refactor : 코드 리펙토링
-test : 테스트 코드, 리펙토링 테스트 코드 추가
-chore : 빌드 업무 수정, 패키지 매니저 수정
-```
-
-<br/>
-
-<br/>
-
-## 커밋 예시
-
-```
-== ex1
-feat: "회원 가입 기능 구현"
-
-== ex2
-fix: "DB연결 에러 해결"
-```
